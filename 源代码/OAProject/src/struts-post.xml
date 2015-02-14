@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.1//EN" "http://struts.apache.org/dtds/struts-2.1.dtd">
+<struts>
+
+	
+	<constant name="struts.ognl.allowStaticMethodAccess" value="true" />
+	<!-- 提示文件上传错误信息 -->
+	<constant name="struts.custom.i18n.resources" value="fileupload_error" />
+	<!-- 设置上传文件的总大小 默认2M  此处为15M-->
+	<constant name="struts.multipart.maxSize" value="15728640" />
+
+	<package name="post" extends="struts-default" namespace="/post">
+
+		<action name="postAction" class="post.action.PostAction">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="fileUpload">
+				<param name="maximumSize">5242880</param>
+			</interceptor-ref>
+			<result name="login">/jsp/post/success.jsp</result>
+			<result name="input">/jsp/post/addpost.jsp</result>
+			<result name="success">/jsp/post/lookpost.jsp</result>
+			<result name="postlistread">/jsp/post/readpost.jsp</result>
+			<result name="postlistnoread">/jsp/post/noreadpost.jsp</result>
+			<result name="postlist">/jsp/post/lookpost.jsp</result>
+			<result name="lookpost">/jsp/post/lookpostmessage.jsp</result>
+			<result name="shenghepost">/jsp/post/shenhepost.jsp</result>
+			<result name="postmanage">/jsp/post/postManage.jsp</result>
+			<result name="deletePost">/jsp/post/success.jsp</result>
+			<result name="updatebefore">/jsp/post/updatepost.jsp</result>
+			<result name="shenghe">/jsp/post/success.jsp</result>
+			<result name="postmanagelist" type="redirectAction">
+				<param name="actionName">postAction</param>
+				<param name="method">postmanage</param>
+
+			</result>
+			<result name="shenghepostlist" type="redirectAction">
+				<param name="actionName">postAction</param>
+				<param name="method">shenghepost</param>
+
+			</result>
+		</action>
+		<action name="downLoadAction" class="post.action.DownLoadAction">
+			<result type="stream" name="success">
+				<param name="contentDisposition">attachment;filename="${fileName}"</param>
+				<!-- 可选 可以指定提供InputStream的方法 -->
+				<param name="inputName">inputStream</param>
+			</result>
+		</action>
+		<action name="postFileAction" class="post.action.PostFileAction">
+			<result>/jsp/post/success.jsp</result>
+		</action>
+		
+		<action name="autoshenheAction" class="post.action.AutoShenheAction">
+			<result>/jsp/post/success.jsp</result>
+		</action>
+	</package>
+
+
+</struts>    

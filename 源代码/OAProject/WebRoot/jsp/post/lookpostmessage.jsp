@@ -1,0 +1,120 @@
+<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.fckeditor.net" prefix="FCK"%>
+<%@ taglib uri="/struts-tags" prefix="s"%>
+
+<%
+	String path = request.getContextPath();
+	String basePath = request.getScheme() + "://"
+			+ request.getServerName() + ":" + request.getServerPort()
+			+ path + "/";
+%>
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+	<head>
+		<base href="<%=basePath%>">
+
+		<title>My JSP 'lookpostmessage.jsp' starting page</title>
+
+		<meta http-equiv="pragma" content="no-cache">
+		<meta http-equiv="cache-control" content="no-cache">
+		<meta http-equiv="expires" content="0">
+		<meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+		<meta http-equiv="description" content="This is my page">
+		<!--
+	<link rel="stylesheet" type="text/css" href="styles.css">
+	-->
+
+	</head>
+	
+	<body>
+		<s:form theme="simple">
+			<table width="800">
+				<tr>
+					<td colspan="4" bgcolor="#3399FF" align="center">
+						公告详细
+					</td>
+				</tr>
+				<tr>
+					<td>
+						标题：
+					</td>
+					<td colspan="3">
+						<s:property value="%{#request.postBean1.stitle}" />
+					</td>
+				</tr>
+				<tr>
+					<td>
+						发布者：
+					</td>
+					<td>
+						<s:property value="%{#request.postBean1.suser}" />
+					</td>
+					<td>
+						发布时间：
+					</td>
+					<td>
+						<s:property value="%{#request.postBean1.addtime}" />
+					</td>
+				</tr>
+				<tr>
+					<td>
+						生效时间：
+					</td>
+					<td>
+						<s:property value="%{#request.postBean1.begindate}" />
+					</td>
+					<td>
+						失效时间：
+					</td>
+					<td>
+						<s:property value="%{#request.postBean1.enddate}" />
+					</td>
+				</tr>
+				<tr>
+					<td>
+						修改者：
+					</td>
+					<td>
+						<s:property value="%{#request.postBean1.updateuser}" />
+					</td>
+					<td>
+						修改时间：
+					</td>
+					<td>
+						<s:property value="%{#request.postBean1.updatetime}" />
+					</td>
+				</tr>
+				<tr>
+					<td colspan="4">
+						<FCK:editor  instanceName="EditorDefault" inputName="content"
+							basePath="/fckeditor" value="${content}"/>	
+					</td>
+				</tr>
+
+				
+				<tbody id="tbd">
+
+					<s:iterator value="#attr.postFileBeans" var="postFile">
+						<tr id="tr${postFile.nid}">
+							<td>
+
+								<s:property value="#postFile.soldname" />
+								<td>
+								<s:a href="post/downLoadAction?fileName=%{#postFile.soldname}&realFileName=%{#postFile.snewname}">附件下载"</s:a>
+									</td>
+
+							</td>
+						</tr>
+
+
+					</s:iterator>
+				</tbody>
+
+
+			</table>
+		</s:form>
+
+
+	</body>
+</html>

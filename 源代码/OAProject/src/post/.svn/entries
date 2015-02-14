@@ -1,0 +1,52 @@
+10
+
+dir
+53
+svn://210.34.192.119:3691/OA/OAProject/src/post
+svn://210.34.192.119:3691/OA
+
+
+
+2013-08-11T07:36:19.892731Z
+12
+lxf
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+c42905b9-42e8-ae49-be1c-e768bf25d30a
+
+test
+dir
+
+service
+dir
+
+dao
+dir
+
+imple
+dir
+
+pojo
+dir
+
+inf
+dir
+
+action
+dir
+
+util
+dir
+

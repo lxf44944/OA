@@ -1,0 +1,404 @@
+package user.imple;
+// default package
+
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.hibernate.HibernateException;
+import org.hibernate.LockMode;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.orm.hibernate3.HibernateCallback;
+import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+
+import pojo.TRole;
+import pojo.TUser;
+import user.dao.PageModel;
+import user.dao.RoleDAO;
+
+/**
+ * A data access object (DAO) providing persistence and search support for TRole
+ * entities. Transaction control of the save(), update() and delete() operations
+ * can directly support Spring container-managed transactions or they can be
+ * augmented to handle user-managed Spring transactions. Each of these methods
+ * provides additional information for how to configure it for the desired type
+ * of transaction control.
+ * 
+ * @see .TRole
+ * @author MyEclipse Persistence Tools
+ */
+public class RoleDAOImple extends HibernateDaoSupport implements RoleDAO{
+	private static final Logger log = LoggerFactory.getLogger(RoleDAOImple.class);
+	// property constants
+	public static final String ROLENAME = "rolename";
+	public static final String ROLEINFO = "roleinfo";
+	public static final String UPDATEUSER = "updateuser";
+	public static final String ISDEL = "isdel";
+	@Override
+	public List<TRole> query() {
+		String hql="from TRole where isdel=0";
+		log.debug("getting TRole instance ");
+		try {
+			List list  = getHibernateTemplate().find(hql);
+			return list;
+		} catch (RuntimeException re) {
+			log.error("get failed", re);
+			throw re;
+		}
+	}
+	public List<Object> findPageByQuery(final int pageNo, final int pageSize, final String hql,
+			final Map map) {
+		@SuppressWarnings("unchecked")
+		List<Object> result =getHibernateTemplate().executeFind(new HibernateCallback() {
+
+			@Override
+			public Object doInHibernate(Session session)
+					throws HibernateException, SQLException {
+				List<Object> result = null;
+				try {
+					Query query = session.createQuery(hql);
+					Iterator it = map.keySet().iterator();
+					while (it.hasNext()) {
+						Object key = it.next();
+						query.setParameter(key.toString(), map.get(key));
+					}
+					query.setFirstResult((pageNo - 1) * pageSize);
+					query.setMaxResults(pageSize);
+					result = query.list();
+				} catch (RuntimeException re) {
+					throw re;
+				}
+				return result;
+			}
+		});
+		return result;
+	}
+
+	public int getTotalCount(final String hql, final Map map) {
+		
+	 int count =getHibernateTemplate().execute(new HibernateCallback<Integer>() {
+
+		@Override
+		public Integer doInHibernate(Session session) throws HibernateException,
+				SQLException {
+			try {
+				Query query = session.createQuery(hql);
+				Iterator it = map.keySet().iterator();
+				while (it.hasNext()) {
+					Object key = it.next();
+					query.setParameter(key.toString(), map.get(key));
+				}
+				List list = query.list();
+				if(list != null){
+					int i = Integer.valueOf(list.get(0).toString());
+					return i;
+				}
+				return 0;
+			} catch (RuntimeException re) {
+				throw re;
+			}
+		}
+	});
+	 return count;
+
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public PageModel search(final TRole role, final int currentPage,
+			final int pageSize) {
+		log.debug("finding TRole instance by page");
+		PageModel model = new PageModel();
+		try {
+			model=	getHibernateTemplate().execute(new HibernateCallback() {
+						@Override
+						public Object doInHibernate(Session session)
+								throws HibernateException, SQLException {
+							List results = null;
+							StringBuilder hql = new StringBuilder();
+							hql.append("select count(roleid) from TRole where 1=1");
+							Map map = new HashMap();
+							hql.append(" and isdel = :isdel");
+							map.put("isdel", 0); 
+							if (role != null) {
+								if (role.getRolename() != null
+										&& role.getRolename().trim().length() > 0) {
+									hql.append(" and rolename like :rolename");
+									map.put("rolename", "%" + role.getRolename() + "%"); 
+								}
+							}
+							hql.append("  order by roleid");
+							String queryHql = hql.substring(20); 
+							List result = findPageByQuery(currentPage, pageSize, 
+							queryHql, map); 
+							int rowCount = getTotalCount(hql.toString(), map);
+							PageModel model = new PageModel();
+							model.setAllCount(rowCount);
+							model.setResult(result);
+							model.setCurrentPage(currentPage);
+							model.setPageSize(pageSize);
+							return model;
+						}
+					});
+			log.debug("find by example successful, result size: ");
+			return model;
+		} catch (RuntimeException re) {
+			log.error("find by example failed", re);
+			throw re;
+		}
+	}
+	@Override
+	public void save(TRole role) {
+		log.debug("saving TRole instance");
+		try {
+			getHibernateTemplate().save(role);
+			log.debug("save successful");
+		} catch (RuntimeException re) {
+			log.error("save failed", re);
+			throw re;
+		}
+		
+	}
+	@Override
+	public void update(TRole role) {
+		log.debug("updating TRole instance");
+		try {
+			getHibernateTemplate().update(role);
+			log.debug("update successful");
+		} catch (RuntimeException re) {
+			log.error("update failed", re);
+			throw re;
+		}
+		
+	}
+	@Override
+	public TRole findByRid(int rid) {
+		log.debug("getting TRole instance with id: " + rid);
+		try {
+			TRole instance = (TRole) getHibernateTemplate().get("pojo.TRole", rid);
+			return instance;
+		} catch (RuntimeException re) {
+			log.error("get failed", re);
+			throw re;
+		}
+	}
+	@Override
+	public List findMidByRid(int rid) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public boolean checkRolename(String rolename) {
+		log.debug("getting TRole instance with id: " + rolename);
+		String hql="from TRole where rolename=? ";
+		try {
+			List list =  getHibernateTemplate().find(hql,rolename);
+			if(list != null && list.size() >0){
+				return true;
+			}
+			return false;
+		} catch (RuntimeException re) {
+			log.error("get failed", re);
+			throw re;
+		}
+	}
+	@Override
+	public void delete(final int rid) {
+		log.debug("deleting TRole instance");
+		try {
+			getHibernateTemplate().execute(new HibernateCallback<TRole>() {
+
+				@Override
+				public TRole doInHibernate(Session session)
+						throws HibernateException, SQLException {
+					String hql="update TRole set isdel=1 where roleid=?";
+					Query query = session.createQuery(hql);
+					query.setInteger(0, rid);
+					query.executeUpdate();
+					return null;
+				}
+			});
+			
+			log.debug("delete successful");
+		} catch (RuntimeException re) {
+			log.error("delete failed", re);
+			throw re;
+		}
+	}
+	
+	
+	@Override
+	public int findMaxRoleId() {
+		log.debug("getting TRole instance with id: ");
+		try {
+			String hql = "select Max(roleid) from TRole";
+			List list =  getHibernateTemplate().find(hql);
+			return (Integer) list.iterator().next();
+		} catch (RuntimeException re) {
+			log.error("get failed", re);
+			throw re;
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	@Override
+	public boolean isUse(int rid) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	protected void initDao() {
+		// do nothing
+	}
+
+//	public void save(TRole transientInstance) {
+//		log.debug("saving TRole instance");
+//		try {
+//			getHibernateTemplate().save(transientInstance);
+//			log.debug("save successful");
+//		} catch (RuntimeException re) {
+//			log.error("save failed", re);
+//			throw re;
+//		}
+//	}
+
+	public void delete(TRole persistentInstance) {
+		log.debug("deleting TRole instance");
+		try {
+			getHibernateTemplate().delete(persistentInstance);
+			log.debug("delete successful");
+		} catch (RuntimeException re) {
+			log.error("delete failed", re);
+			throw re;
+		}
+	}
+
+	public TRole findById(java.lang.Integer id) {
+		log.debug("getting TRole instance with id: " + id);
+		try {
+			TRole instance = (TRole) getHibernateTemplate().get("TRole", id);
+			return instance;
+		} catch (RuntimeException re) {
+			log.error("get failed", re);
+			throw re;
+		}
+	}
+
+	public List findByExample(TRole instance) {
+		log.debug("finding TRole instance by example");
+		try {
+			List results = getHibernateTemplate().findByExample(instance);
+			log.debug("find by example successful, result size: "
+					+ results.size());
+			return results;
+		} catch (RuntimeException re) {
+			log.error("find by example failed", re);
+			throw re;
+		}
+	}
+
+	public List findByProperty(String propertyName, Object value) {
+		log.debug("finding TRole instance with property: " + propertyName
+				+ ", value: " + value);
+		try {
+			String queryString = "from TRole as model where model."
+					+ propertyName + "= ?";
+			return getHibernateTemplate().find(queryString, value);
+		} catch (RuntimeException re) {
+			log.error("find by property name failed", re);
+			throw re;
+		}
+	}
+
+	public List findByRolename(Object rolename) {
+		return findByProperty(ROLENAME, rolename);
+	}
+
+	public List findByRoleinfo(Object roleinfo) {
+		return findByProperty(ROLEINFO, roleinfo);
+	}
+
+	public List findByUpdateuser(Object updateuser) {
+		return findByProperty(UPDATEUSER, updateuser);
+	}
+
+	public List findByIsdel(Object isdel) {
+		return findByProperty(ISDEL, isdel);
+	}
+
+	public List findAll() {
+		log.debug("finding all TRole instances");
+		try {
+			String queryString = "from TRole";
+			return getHibernateTemplate().find(queryString);
+		} catch (RuntimeException re) {
+			log.error("find all failed", re);
+			throw re;
+		}
+	}
+
+	public TRole merge(TRole detachedInstance) {
+		log.debug("merging TRole instance");
+		try {
+			TRole result = (TRole) getHibernateTemplate().merge(
+					detachedInstance);
+			log.debug("merge successful");
+			return result;
+		} catch (RuntimeException re) {
+			log.error("merge failed", re);
+			throw re;
+		}
+	}
+
+	public void attachDirty(TRole instance) {
+		log.debug("attaching dirty TRole instance");
+		try {
+			getHibernateTemplate().saveOrUpdate(instance);
+			log.debug("attach successful");
+		} catch (RuntimeException re) {
+			log.error("attach failed", re);
+			throw re;
+		}
+	}
+
+	public void attachClean(TRole instance) {
+		log.debug("attaching clean TRole instance");
+		try {
+			getHibernateTemplate().lock(instance, LockMode.NONE);
+			log.debug("attach successful");
+		} catch (RuntimeException re) {
+			log.error("attach failed", re);
+			throw re;
+		}
+	}
+
+	public static RoleDAOImple getFromApplicationContext(ApplicationContext ctx) {
+		return (RoleDAOImple) ctx.getBean("TRoleDAO");
+	}
+	
+}

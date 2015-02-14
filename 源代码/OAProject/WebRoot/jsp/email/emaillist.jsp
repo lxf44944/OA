@@ -1,0 +1,301 @@
+<%@page import="email.tools.PageSupport"%>
+<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
+<%@ taglib prefix="s" uri="/struts-tags"%>
+<%
+String path = request.getContextPath();
+String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
+%>
+<%
+	int totalPage = ((PageSupport)request.getAttribute("pageSupport")).getTotalPage();
+	List<Integer> nums = new ArrayList<Integer>();
+	for(int i=1;i<=totalPage;i++){
+		nums.add(i);
+	}
+	request.setAttribute("nums", nums);
+
+ %>
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <base href="<%=basePath%>">
+    
+    <title>${type==0?"草稿箱":type==1?"已发送":type==2?"收件箱":"垃圾箱"}</title>
+    
+	<meta http-equiv="pragma" content="no-cache">
+	<meta http-equiv="cache-control" content="no-cache">
+	<meta http-equiv="expires" content="0">    
+	<meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+	<meta http-equiv="description" content="This is my page">
+	<!--
+	<link rel="stylesheet" type="text/css" href="styles.css">
+	-->
+
+  </head>
+<style type="text/css">
+
+body {
+	margin-left: 0px;
+	margin-top: 0px;
+	margin-right: 0px;
+	margin-bottom: 0px;
+}
+.STYLE1 {font-size: 16px}
+.STYLE3 {font-size: 15px; font-weight: bold; }
+.STYLE4 {
+	color: #03515d;
+	font-size: 15px;
+}
+A.ACLASS:link{font-size: 15px;color:blue;text-decoration: none}
+A.ACLASS:hover{font-size: 15px;color:blue;text-decoration: none}
+A.ACLASS:visited{font-size: 15px;color:blue;text-decoration: none}
+A.ACLASS:active{font-size: 15px;color:blue;text-decoration: none}
+
+</style>
+
+<script>
+ var  highlightcolor='#c1ebff';
+//此处clickcolor只能用win系统颜色代码才能成功,如果用#xxxxxx的代码就不行,还没搞清楚为什么:(
+var  clickcolor='#51b2f6';
+function  changeto(){
+source=event.srcElement;
+if  (source.tagName=="TR"||source.tagName=="TABLE")
+return;
+while(source.tagName!="TD")
+source=source.parentElement;
+source=source.parentElement;
+cs  =  source.children;
+//alert(cs.length);
+if  (cs[1].style.backgroundColor!=highlightcolor&&source.id!="nc"&&cs[1].style.backgroundColor!=clickcolor)
+for(i=0;i<cs.length;i++){
+	cs[i].style.backgroundColor=highlightcolor;
+}
+}
+
+function  changeback(){
+if  (event.fromElement.contains(event.toElement)||source.contains(event.toElement)||source.id=="nc")
+return
+if  (event.toElement!=source&&cs[1].style.backgroundColor!=clickcolor)
+//source.style.backgroundColor=originalcolor
+for(i=0;i<cs.length;i++){
+	cs[i].style.backgroundColor="";
+}
+}
+
+function  clickto(){
+source=event.srcElement;
+if  (source.tagName=="TR"||source.tagName=="TABLE")
+return;
+while(source.tagName!="TD")
+source=source.parentElement;
+source=source.parentElement;
+cs  =  source.children;
+//alert(cs.length);
+if  (cs[1].style.backgroundColor!=clickcolor&&source.id!="nc")
+for(i=0;i<cs.length;i++){
+	cs[i].style.backgroundColor=clickcolor;
+}
+else
+for(i=0;i<cs.length;i++){
+	cs[i].style.backgroundColor="";
+}
+}
+
+ 
+//复选框
+// --列头全选框被单击--- 
+function ChkAllClick(){ 
+var arrSon = document.getElementsByName("checkbox"); 
+var cbAll = document.getElementById("allcheck"); 
+var tempState=cbAll.checked; 
+for(i=0;i<arrSon.length;i++) { 
+if(arrSon[i].checked!=tempState) 
+arrSon[i].click(); 
+} 
+} 
+
+function CheckAll(){ 
+var cbAll = document.getElementById("allcheck"); 
+cbAll.checked = true; 
+ChkAllClick();
+} 
+
+// --子项复选框被单击--- 
+function ChkSonClick() { 
+var arrSon = document.getElementsByName("checkbox"); 
+var cbAll = document.getElementById("allcheck");  
+for(var i=0; i<arrSon.length; i++) { 
+if(!arrSon[i].checked) { 
+cbAll.checked = false; 
+return; 
+} 
+} 
+cbAll.checked = true; 
+} 
+
+// --反选被单击--- 
+function ChkOppClick(){ 
+var arrSon = document.getElementsByName("checkbox"); 
+for(i=0;i<arrSon.length;i++) { 
+arrSon[i].click(); 
+} 
+}
+//表单提交
+function submit(value){
+	var arrSon = document.getElementsByName("checkbox"); 
+	for(var i=0; i<arrSon.length; i++) { 
+		if(arrSon[i].checked) { 
+			break; 
+		}
+		if(i==arrSon.length-1){
+			alert("请选择邮件");
+			return;
+		}
+	} 
+	var form = document.forms[0];
+		if(value=="还原"){
+			form.action="<%=request.getContextPath()%>/email/emailAction!deleteByList.action?type=0&site=${type}&curPage=${pageSupport.curPage}";
+		}else if(value=="删除"){
+			form.action="<%=request.getContextPath()%>/email/emailAction!deleteByList.action?type=3&site=${type}&curPage=${pageSupport.curPage}";
+		}else if(value=="彻底删除"){
+			form.action="<%=request.getContextPath()%>/email/emailAction!deleteByList.action?type=4&site=${type}&curPage=${pageSupport.curPage}";
+		}				
+			form.submit();
+}
+
+//翻页
+	function turnPage(nextPage){
+		var curPage = ${pageSupport.curPage}; 
+		var totalPage = ${pageSupport.totalPage}; 
+		if(nextPage<1 || nextPage>totalPage || nextPage==curPage){
+			return;
+		}
+		var url = "<%=path%>/email/emailAction!emaillist.action?type=${type}&curPage=" + nextPage;
+		window.location.href=url;
+	}
+
+
+</script>
+
+</head>
+
+<body>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td height="30" background="<%=request.getContextPath()%>/main/tab/images/tab_05.gif"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="12" height="30"><img src="<%=request.getContextPath()%>/main/tab/images/tab_03.gif" width="12" height="30" /></td>
+        <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+          <tr>
+            <td width="46%" valign="middle"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td width="5%"><div align="center"><img src="<%=request.getContextPath()%>/main/tab/images/tb.gif" width="16" height="16" /></div></td>
+                <td width="95%" class="STYLE1"><span class="STYLE3">你当前的位置</span>：[<a class="ACLASS" href="<%=request.getContextPath()%>/email/emailAction.action">邮件中心</a>]-[<a class="ACLASS" href="<%=request.getContextPath()%>/email/emailAction!emaillist.action?type=${type}">${type==0?"草稿箱":type==1?"已发送":type==2?"收件箱":"垃圾箱"}</a>]</td>
+              </tr>
+            </table></td>
+            <td width="54%"><table border="0" align="right" cellpadding="0" cellspacing="0">
+              <tr>
+                <td width="60"><table width="87%" border="0" cellpadding="0" cellspacing="0">
+                  <tr>
+                    <td class="STYLE1"><div align="center">
+                      <input type="button" style="background-color:transparent; HEIGHT:20px" value="全选" onclick="CheckAll();"/>
+                    </div>
+                </table></td>
+                <td width="60"><table width="90%" border="0" cellpadding="0" cellspacing="0">
+                  <tr>
+                    <td class="STYLE1"><div align="center"> <input type="button" style="background-color:transparent; HEIGHT:20px" value="反选" onclick="ChkOppClick();"/></div></td>
+                  </tr>
+                </table></td>
+                <td width="60"><table width="90%" border="0" cellpadding="0" cellspacing="0">
+                  <tr>
+                    <td class="STYLE1"><div align="center"> <input type="button" style="background-color:transparent; HEIGHT:20px" value="${type==3?'还原':'删除'}" onclick="submit(this.value);"/></div></td>
+                  </tr>
+                </table></td>
+                <td width="52"><table width="88%" border="0" cellpadding="0" cellspacing="0">
+                  <tr>
+                    <td class="STYLE1"><div align="center"> <input type="button" style="background-color:transparent; HEIGHT:20px" value="彻底删除" onclick="submit(this.value);"/></div></td>
+                  </tr>
+                </table></td>
+              </tr>
+            </table></td>
+          </tr>
+        </table></td>
+        <td width="16"><img src="<%=request.getContextPath()%>/main/tab/images/tab_07.gif" width="16" height="30" /></td>
+      </tr>
+    </table></td>
+  </tr>
+  <tr height="800px" valign="top">
+    <td><table width="100%" height="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr valign="top">
+        <td width="8" background="<%=request.getContextPath()%>/main/tab/images/tab_12.gif">&nbsp;</td>
+        <td><table width="100%" border="0" cellpadding="0" cellspacing="1" bgcolor="b5d6e6" onmouseover="changeto()"  onmouseout="changeback()">
+          <tr>
+            <td width="3%" height="22" background="<%=request.getContextPath()%>/main/tab/images/bg.gif" bgcolor="#FFFFFF"><div align="center">
+              <input type="checkbox" name="allcheck" value="checkbox" id="allcheckid" onclick="ChkAllClick();"/>
+            </div></td>
+            <td width="3%" height="22" background="<%=request.getContextPath()%>/main/tab/images/bg.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">序号</span></div></td>
+            <td width="12%" height="22" background="<%=request.getContextPath()%>/main/tab/images/bg.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">是否已读</span></div></td>
+            <td width="15%" height="22" background="<%=request.getContextPath()%>/main/tab/images/bg.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">${type>1?"发件人":"收件人"}</span></div></td>
+            <td width="20%" height="22" background="<%=request.getContextPath()%>/main/tab/images/bg.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">主题</span></div></td>
+            <td width="15%" height="22" background="<%=request.getContextPath()%>/main/tab/images/bg.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">发送时间</span></div></td>
+            <td width="12%" background="<%=request.getContextPath()%>/main/tab/images/bg.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">附件</span></div></td>
+          </tr>
+         <s:if test="#request.emails==null||#request.emails.size()<=0">
+       
+         <tr height="100px" valign="middle">
+         	<td height="100%" colspan="7" align="center" bgcolor="#FFFFFF">
+         	<b style="font-family: 楷体;font-size: 30px;font-weight: bold;">您的${type==0?"草稿箱":type==1?"已发送":type==2?"收件箱":"垃圾箱"}没有邮件</b>
+         	</td>         
+         </tr>         
+         </s:if>
+         <s:form method="POST" theme="simple">
+         <s:iterator value="#request.emails" status="i">
+          <tr>
+            <td height="30" bgcolor="#FFFFFF"><div align="center">
+              <input type="checkbox" name="checkbox" value="${id.email.id}" onclick="ChkSonClick();"/>
+            </div></td>
+            <td height="30" bgcolor="#FFFFFF"><div align="center" class="STYLE1">
+              <div align="center"><s:property value="#i.index+1"/>  </div>
+            </div></td>
+            <td height="30" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1"><a class="ACLASS" href="<%=request.getContextPath()%>/email/emailAction!${type==0?'drafts':'read'}.action?email.id=${id.email.id}&type=${type}">${isread==true?"已读":"未读"}</a></span></div></td>
+            <td height="30" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1"><s:property value="#request.type==3&&issend==true?id.username:#request.usernames.get(#i.index)"/></span></div></td>
+            <td bgcolor="#FFFFFF"><div align="center"><span class="STYLE1"><a class="ACLASS" href="<%=request.getContextPath()%>/email/emailAction!${type==0?'drafts':'read'}.action?email.id=${id.email.id}&type=${type}"><s:property value="id.email.title"/></a></span></div></td>
+            <td height="30" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1"><a class="ACLASS" href="<%=request.getContextPath()%>/email/emailAction!${type==0?'drafts':'read'}.action?email.id=${id.email.id}&type=${type}"><s:date name="id.email.senddate" format="yyyy-MM-dd HH-mm-ss"/></a></span></div></td>
+            <td height="30" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1"><s:property value="id.email.isfile==false?'无':id.email.emailFiles.size()"/>${id.email.isfile==false?"":"个"}</span></div></td>
+          </tr>
+         </s:iterator>	 
+         </s:form>       
+        </table></td>
+        <td width="8" background="<%=request.getContextPath()%>/main/tab/images/tab_15.gif">&nbsp;</td>
+      </tr>
+    </table></td>
+  </tr>
+  <tr>
+    <td height="35" background="<%=request.getContextPath()%>/main/tab/images/tab_19.gif"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="12" height="35"><img src="<%=request.getContextPath()%>/main/tab/images/tab_18.gif" width="12" height="35" /></td>
+        <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+          <tr>
+            <td class="STYLE4">&nbsp;&nbsp;共有 ${pageSupport.totalCount} 条记录，当前第 ${pageSupport.curPage}/${pageSupport.totalPage} 页</td>
+            <td><table border="0" align="right" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td width="40"><img src="<%=request.getContextPath()%>/main/tab/images/first.gif" width="37" height="15" onclick="turnPage(1);" /></td>
+                  <td width="45"><img src="<%=request.getContextPath()%>/main/tab/images/back.gif" width="43" height="15" onclick="turnPage(${pageSupport.curPage-1})"/></td>
+                  <td width="45"><img src="<%=request.getContextPath()%>/main/tab/images/next.gif" width="43" height="15" onclick="turnPage(${pageSupport.curPage+1})"/></td>
+                  <td width="40"><img src="<%=request.getContextPath()%>/main/tab/images/last.gif" width="37" height="15" onclick="turnPage(${pageSupport.totalPage})"/></td>
+                  <td width="140"><div align="center"><span class="STYLE1">转到第
+                    <s:select list="#request.nums" value="#request.pageSupport.curPage" onchange="turnPage(this.value)" theme="simple"></s:select> 
+                    页 </span></div>
+                  </td>
+                </tr>
+            </table></td>
+          </tr>
+        </table></td>
+        <td width="16"><img src="<%=request.getContextPath()%>/main/tab/images/tab_20.gif" width="16" height="35" /></td>
+      </tr>
+    </table></td>
+  </tr>
+</table>
+</body>
+
+</html>

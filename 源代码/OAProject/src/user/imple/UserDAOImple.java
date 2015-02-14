@@ -1,0 +1,623 @@
+package user.imple;
+
+// default package
+
+import java.sql.SQLException;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.hibernate.HibernateException;
+import org.hibernate.LockMode;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.orm.hibernate3.HibernateCallback;
+import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+
+import com.sun.org.apache.xpath.internal.axes.HasPositionalPredChecker;
+
+import email.tools.PageSupport;
+
+import pojo.TDatadic;
+import pojo.TEmail;
+import pojo.TMenu;
+import pojo.TReceiveemail;
+import pojo.TUser;
+import post.pojo.TPost;
+import user.dao.PageModel;
+import user.dao.UserDAO;
+
+/**
+ * A data access object (DAO) providing persistence and search support for TUser
+ * entities. Transaction control of the save(), update() and delete() operations
+ * can directly support Spring container-managed transactions or they can be
+ * augmented to handle user-managed Spring transactions. Each of these methods
+ * provides additional information for how to configure it for the desired type
+ * of transaction control.
+ * 
+ * @see .TUser
+ * @author MyEclipse Persistence Tools
+ */
+public class UserDAOImple extends HibernateDaoSupport implements UserDAO {
+	private static final Logger log = LoggerFactory
+			.getLogger(UserDAOImple.class);
+	// property constants
+	public static final String USERNAME = "username";
+	public static final String PASSWORD = "password";
+	public static final String REALNAME = "realname";
+	public static final String DEPTNO = "deptno";
+	public static final String JOBNO = "jobno";
+	public static final String SEX = "sex";
+	public static final String CITY = "city";
+	public static final String IDCARD = "idcard";
+	public static final String TELEPHONE = "telephone";
+	public static final String EMAIL = "email";
+	public static final String MOBILEPHONE = "mobilephone";
+	public static final String ADDRESS = "address";
+	public static final String MARRIED = "married";
+	public static final String FREEZE = "freeze";
+
+	public List<Object> findPageByQuery(final int pageNo, final int pageSize, final String hql,
+			final Map map) {
+		@SuppressWarnings("unchecked")
+		List<Object> result =getHibernateTemplate().executeFind(new HibernateCallback() {
+
+			@Override
+			public Object doInHibernate(Session session)
+					throws HibernateException, SQLException {
+				List<Object> result = null;
+				try {
+					Query query = session.createQuery(hql);
+					Iterator it = map.keySet().iterator();
+					while (it.hasNext()) {
+						Object key = it.next();
+						query.setParameter(key.toString(), map.get(key));
+					}
+					query.setFirstResult((pageNo - 1) * pageSize);
+					query.setMaxResults(pageSize);
+					result = query.list();
+				} catch (RuntimeException re) {
+					throw re;
+				}
+				return result;
+			}
+		});
+		return result;
+	}
+
+	public int getTotalCount(final String hql, final Map map) {
+		
+	 int count =getHibernateTemplate().execute(new HibernateCallback<Integer>() {
+
+		@Override
+		public Integer doInHibernate(Session session) throws HibernateException,
+				SQLException {
+			try {
+				Query query = session.createQuery(hql);
+				Iterator it = map.keySet().iterator();
+				while (it.hasNext()) {
+					Object key = it.next();
+					query.setParameter(key.toString(), map.get(key));
+				}
+				List list = query.list();
+				if(list != null){
+					int i = Integer.valueOf(list.get(0).toString());
+					return i;
+				}
+				return 0;
+			} catch (RuntimeException re) {
+				throw re;
+			}
+		}
+	});
+	 return count;
+
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public PageModel search(final TUser user, final int currentPage,
+			final int pageSize) {
+		log.debug("finding TRole instance by page");
+		PageModel model = new PageModel();
+		try {
+			model=	getHibernateTemplate().execute(new HibernateCallback() {
+						@Override
+						public Object doInHibernate(Session session)
+								throws HibernateException, SQLException {
+							List results = null;
+							StringBuilder hql = new StringBuilder();
+							hql.append("select count(userid) from TUser where 1=1 ");
+							Map map = new HashMap();
+							if (user != null) {
+								if (user.getUsername() != null
+										&& user.getUsername().trim().length() > 0) {
+									hql.append(" and username like :username");
+									map.put("username", "%" + user.getUsername() + "%"); 
+								}
+								if (user.getRealname() != null
+										&& !"".equals(user.getRealname())) {
+									hql.append(" and realname like :realname");
+									map.put("realname", "%" + user.getRealname() + "%"); 
+								}
+								if (user.getDeptno() != null
+										&& user.getDeptno() > 0) {
+									hql.append(" and deptno= :deptno");
+									map.put("deptno", user.getDeptno());
+								}
+							}
+							hql.append("  order by userid");
+							String queryHql = hql.substring(20); 
+							List result = findPageByQuery(currentPage, pageSize, 
+							queryHql, map); 
+							int rowCount = getTotalCount(hql.toString(), map);
+							PageModel model = new PageModel();
+							model.setAllCount(rowCount);
+							model.setResult(result);
+							model.setCurrentPage(currentPage);
+							model.setPageSize(pageSize);
+							return model;
+						}
+					});
+			log.debug("find by example successful, result size: ");
+			return model;
+		} catch (RuntimeException re) {
+			log.error("find by example failed", re);
+			throw re;
+		}
+	}
+
+	@Override
+	public void update(TUser user) {
+		log.debug("update TUser instance");
+		try {
+			getHibernateTemplate().update(user);
+			log.debug("update successful");
+		} catch (RuntimeException re) {
+			log.error("update failed", re);
+			throw re;
+		}
+
+	}
+
+	@Override
+	public TUser findByUserid(int userid) {
+		log.debug("getting TUser instance with id: " + userid);
+		try {
+			TUser instance = (TUser) getHibernateTemplate().get("pojo.TUser",
+					userid);
+			return instance;
+		} catch (RuntimeException re) {
+			log.error("get failed", re);
+			throw re;
+		}
+	}
+
+	@Override
+	public boolean dostatus(final int userid, final int freeze) {
+		log.debug("update TUser instance");
+		try {
+			boolean flag = getHibernateTemplate().execute(
+					new HibernateCallback<Boolean>() {
+
+						@Override
+						public Boolean doInHibernate(Session session)
+								throws HibernateException, SQLException {
+							int i = 0;
+							String hql = null;
+							if (freeze == 0) {
+								hql = "update TUser set freeze=1 where userid=:tuserid";
+
+							}
+							if (freeze == 1) {
+								hql = "update TUser set freeze=0 where userid=:tuserid";
+
+							}
+							Query query = session.createQuery(hql);
+							query.setInteger("tuserid", userid);
+							
+							return query.executeUpdate() > 0;
+						}
+					});
+			return flag;
+
+		} catch (RuntimeException re) {
+			log.error("update failed", re);
+			throw re;
+		}
+	}
+
+	@Override
+	public int findUserByUserId() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void save(TUser user) {
+		log.debug("saving TUser instance");
+		try {
+			getHibernateTemplate().save(user);
+			log.debug("save successful");
+		} catch (RuntimeException re) {
+			log.error("save failed", re);
+			throw re;
+		}
+
+	}
+
+	@Override
+	public int deleteRole(int userid) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public boolean checkUsername(String username) {
+
+		return findByProperty(USERNAME, username).size() > 0;
+	}
+
+	@Override
+	public void updatepwd(int userid, String password) {
+		log.debug("update all TUser instances");
+		try {
+			String hql = "update TUser set password=? where userid=?";
+			Object[] param = { password, userid };
+			getHibernateTemplate().bulkUpdate(hql, param);
+		} catch (RuntimeException re) {
+			log.error("find all failed", re);
+			throw re;
+		}
+
+	}
+
+	@Override
+	public List findRidByUserid(int userid) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public TUser findUserbeanByUsername(String username) {
+		log.debug("getting TUser instance with username: " + username);
+		String hql = " from TUser where username=?";
+		try {
+			List list = getHibernateTemplate().find(hql, username);
+			if (list.size() > 0) {
+				return (TUser) list.get(0);
+			}
+			return null;
+		} catch (RuntimeException re) {
+			log.error("get failed", re);
+			throw re;
+		}
+	}
+
+	@Override
+	public boolean isExit(TUser userBean) {
+		log.debug("getting TUser instance with username: ");
+		String hql = "from TUser where username=? and password = ?";
+		try {
+			List list = getHibernateTemplate().find(hql,
+					userBean.getUsername(), userBean.getPassword());
+			return list.size() > 0;
+		} catch (RuntimeException re) {
+			log.error("get failed", re);
+			throw re;
+		}
+	}
+
+	@Override
+	public TUser findByUsername(String username) {
+		log.debug("getting TUser instance with username: " + username);
+		String hql = "from TUser where username=?";
+		try {
+			List list = getHibernateTemplate().find(hql, username);
+			if (list.size() > 0) {
+				return (TUser) list.get(0);
+			}
+			return null;
+		} catch (RuntimeException re) {
+			log.error("get failed", re);
+			throw re;
+		}
+	}
+
+	@Override
+	public List<TMenu> findUserRoleMenu(final int userid) {
+
+		log.debug("getting TUser instance with userid: " + userid);
+		List list = null;
+		try {
+			list = getHibernateTemplate().executeFind(new HibernateCallback() {
+
+				@Override
+				public Object doInHibernate(Session session)
+						throws HibernateException, SQLException {
+					String sql = "from TMenu tm where tm.menuid in (select distinct tr.id.menuid from TRoleMenu tr where "
+							+ " tr.id.roleid in (select tur.id.roleid from TUserRole tur where tur.id.userid=:tuserid)) order by tm.orderid";
+					Query query = session.createQuery(sql);
+					query.setInteger("tuserid", userid);
+					return query.list();
+				}
+
+			});
+			return list;
+		} catch (RuntimeException re) {
+			log.error("get failed", re);
+			throw re;
+		}
+	}
+
+	@Override
+	public List<TDatadic> query() {
+		log.debug("finding all TDatadic instances");
+		try {
+			String queryString = "from TDatadic";
+			return getHibernateTemplate().find(queryString);
+		} catch (RuntimeException re) {
+			log.error("find all failed", re);
+			throw re;
+		}
+	}
+
+	@Override
+	public int findMaxUserid() {
+		log.debug("finding all TDatadic instances");
+		try {
+			String queryString = "select max(userid) from TUser";
+			return (Integer) getHibernateTemplate().find(queryString)
+					.iterator().next();
+		} catch (RuntimeException re) {
+			log.error("find all failed", re);
+			throw re;
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public PageModel searchBox(TEmail mail, final String username, final int emailmode,
+			final int currentPage, final int pageSize) {
+		log.debug("finding TRole instance by page");
+		PageModel model = new PageModel();
+		try {
+			model=	getHibernateTemplate().execute(new HibernateCallback() {
+						@Override
+						public Object doInHibernate(Session session)
+								throws HibernateException, SQLException {
+							List results = null;
+							Map map = new HashMap();
+							String hql = "from TReceiveemail where id.username=:tusername";
+							if(emailmode >= 0){
+				        		hql += " and id.email.emailmode=" + (emailmode==0?false:true);
+				        	}
+				        	hql += " order by id.email.senddate desc";
+							String queryHql = "select count(*) from TReceiveemail where id.username=:tusername";
+							map.put("tusername", username);
+							List result = findPageByQuery(currentPage, pageSize, 
+							hql, map); 
+							int rowCount = getTotalCount(queryHql, map);
+							PageModel model = new PageModel();
+							model.setAllCount(rowCount);
+							model.setResult(result);
+							model.setCurrentPage(currentPage);
+							model.setPageSize(pageSize);
+							return model;
+						}
+					});
+			log.debug("find by example successful, result size: ");
+			return model;
+		}catch (RuntimeException re) {
+				log.error("find by example failed", re);
+				throw re;
+			}
+	}
+//	String sql = "from TMenu tm where tm.menuid in (select distinct tr.id.menuid from TRoleMenu tr where "
+//		+ " tr.id.roleid in (select tur.id.roleid from TUserRole tur where tur.id.userid=:tuserid)) order by tm.orderid";
+
+	@SuppressWarnings("unchecked")
+	public PageModel searchonlyUser(TPost post, final int userid, final int currentPage,
+			final int pageSize) {
+		log.debug("finding Tpost instance by page");
+		PageModel model = new PageModel();
+		try {
+			model=	getHibernateTemplate().execute(new HibernateCallback() {
+						@Override
+						public Object doInHibernate(Session session)
+								throws HibernateException, SQLException {
+						
+							Query query = session.createQuery("from TPost p where p.postid in (select distinct tu.id.postid from TPostUser tu where  tu.id.suserid = ? and tu.nisread=0) and p.nstatus =1 order by p.addtime desc ");
+							query.setInteger(0,userid);
+							int firstResult =(currentPage-1)*pageSize;
+							query.setFirstResult(firstResult);
+							query.setMaxResults(pageSize);
+							List results = query.list();
+							PageModel model = new PageModel();
+							model.setAllCount(results.size());
+							model.setCurrentPage(currentPage);
+							model.setPageSize(pageSize);
+							model.setResult(results);
+							return model;
+
+						}
+					});
+			log.debug("find by example successful, result size: ");
+			return model;
+		} catch (RuntimeException re) {
+			log.error("find by example failed", re);
+			throw re;
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	protected void initDao() {
+		// do nothing
+	}
+
+	public void delete(TUser persistentInstance) {
+		log.debug("deleting TUser instance");
+		try {
+			getHibernateTemplate().delete(persistentInstance);
+			log.debug("delete successful");
+		} catch (RuntimeException re) {
+			log.error("delete failed", re);
+			throw re;
+		}
+	}
+
+	public TUser findById(java.lang.Integer id) {
+		log.debug("getting TUser instance with id: " + id);
+		try {
+			TUser instance = (TUser) getHibernateTemplate().get("TUser", id);
+			return instance;
+		} catch (RuntimeException re) {
+			log.error("get failed", re);
+			throw re;
+		}
+	}
+
+	public List findByExample(TUser instance) {
+		log.debug("finding TUser instance by example");
+		try {
+			List results = getHibernateTemplate().findByExample(instance);
+			log.debug("find by example successful, result size: "
+					+ results.size());
+			return results;
+		} catch (RuntimeException re) {
+			log.error("find by example failed", re);
+			throw re;
+		}
+	}
+
+	public List findByProperty(String propertyName, Object value) {
+		log.debug("finding TUser instance with property: " + propertyName
+				+ ", value: " + value);
+		try {
+			String queryString = "from TUser as model where model."
+					+ propertyName + "= ?";
+			return getHibernateTemplate().find(queryString, value);
+		} catch (RuntimeException re) {
+			log.error("find by property name failed", re);
+			throw re;
+		}
+	}
+
+	public List findByUsername(Object username) {
+		return findByProperty(USERNAME, username);
+	}
+
+	public List findByPassword(Object password) {
+		return findByProperty(PASSWORD, password);
+	}
+
+	public List findByRealname(Object realname) {
+		return findByProperty(REALNAME, realname);
+	}
+
+	public List findByDeptno(Object deptno) {
+		return findByProperty(DEPTNO, deptno);
+	}
+
+	public List findByJobno(Object jobno) {
+		return findByProperty(JOBNO, jobno);
+	}
+
+	public List findBySex(Object sex) {
+		return findByProperty(SEX, sex);
+	}
+
+	public List findByCity(Object city) {
+		return findByProperty(CITY, city);
+	}
+
+	public List findByIdcard(Object idcard) {
+		return findByProperty(IDCARD, idcard);
+	}
+
+	public List findByTelephone(Object telephone) {
+		return findByProperty(TELEPHONE, telephone);
+	}
+
+	public List findByEmail(Object email) {
+		return findByProperty(EMAIL, email);
+	}
+
+	public List findByMobilephone(Object mobilephone) {
+		return findByProperty(MOBILEPHONE, mobilephone);
+	}
+
+	public List findByAddress(Object address) {
+		return findByProperty(ADDRESS, address);
+	}
+
+	public List findByMarried(Object married) {
+		return findByProperty(MARRIED, married);
+	}
+
+	public List findByFreeze(Object freeze) {
+		return findByProperty(FREEZE, freeze);
+	}
+
+	public List findAll() {
+		log.debug("finding all TUser instances");
+		try {
+			String queryString = "from TUser";
+			return getHibernateTemplate().find(queryString);
+		} catch (RuntimeException re) {
+			log.error("find all failed", re);
+			throw re;
+		}
+	}
+
+	public TUser merge(TUser detachedInstance) {
+		log.debug("merging TUser instance");
+		try {
+			TUser result = (TUser) getHibernateTemplate().merge(
+					detachedInstance);
+			log.debug("merge successful");
+			return result;
+		} catch (RuntimeException re) {
+			log.error("merge failed", re);
+			throw re;
+		}
+	}
+
+	public void attachDirty(TUser instance) {
+		log.debug("attaching dirty TUser instance");
+		try {
+			getHibernateTemplate().saveOrUpdate(instance);
+			log.debug("attach successful");
+		} catch (RuntimeException re) {
+			log.error("attach failed", re);
+			throw re;
+		}
+	}
+
+	public void attachClean(TUser instance) {
+		log.debug("attaching clean TUser instance");
+		try {
+			getHibernateTemplate().lock(instance, LockMode.NONE);
+			log.debug("attach successful");
+		} catch (RuntimeException re) {
+			log.error("attach failed", re);
+			throw re;
+		}
+	}
+
+	public static UserDAOImple getFromApplicationContext(ApplicationContext ctx) {
+		return (UserDAOImple) ctx.getBean("TUserDAO");
+	}
+
+}
