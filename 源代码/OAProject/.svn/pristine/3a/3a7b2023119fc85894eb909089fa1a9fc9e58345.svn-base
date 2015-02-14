@@ -1,0 +1,180 @@
+<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
+<%
+String path = request.getContextPath();
+String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
+%>
+<%@ taglib uri="/struts-tags" prefix="s"%>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <base href="<%=basePath%>">
+    
+    <title>My JSP 'user_onlyedit.jsp' starting page</title>
+    
+	<meta http-equiv="pragma" content="no-cache">
+	<meta http-equiv="cache-control" content="no-cache">
+	<meta http-equiv="expires" content="0">    
+	<meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+	<meta http-equiv="description" content="This is my page">
+		<script src="<%=path %>/js/jquery-1.4.4.min.js" type="text/javascript"></script>
+<script src="<%=path %>/js/formValidator-4.1.3.js" type="text/javascript" charset="UTF-8"></script>
+<script src="<%=path %>/js/formValidatorRegex.js" type="text/javascript" charset="UTF-8"></script>
+<script language="javascript" src="<%=path %>/js/DateTimeMask.js" type="text/javascript"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+	$.formValidator.initConfig({formID:"form1",onError:function(){alert("校验没有通过，具体错误请看错误提示")}});
+	if('${userid}'<=0){
+		$("#username").formValidator({onShow:"请输入用户名",onFocus:"用户名至少3个字符,最多16个字符",onCorrect:"该用户名可以注册"}).inputValidator({min:3,max:16,onError:"你输入的用户名非法,请确认"}).regexValidator({regExp:"username",dataType:"enum",onError:"用户名格式不正确"})
+	    .ajaxValidator({
+		type : "get",
+        dataType : "html",
+        async : true,
+        cache:false,
+		url : "<%=path %>/oa/user!checkUsername.action",
+		success : function(data){
+	        if( data == "0" ) return true;
+			return "该用户名不可用，请更换用户名";
+		},
+		buttons: $("#button"),
+		error: function(jqXHR, textStatus, errorThrown){alert("服务器没有返回数据，可能服务器忙，请重试"+errorThrown);},
+		onError : "该用户名不可用，请更换用户名",
+		onWait : "正在对用户名进行合法性校验，请稍候..."
+	});
+	}
+	
+	$(":radio[name='sex']").formValidator({tipID:"sexTip",onShow:"请选择你的性别",onFocus:"没有第三种性别了，你选一个吧",onCorrect:"输入正确"}).inputValidator({min:1,max:1,onError:"性别忘记选了,请确认"}).defaultPassed();
+	$(":radio[name='married']").formValidator({tipID:"marriedTip",onShow:"请选择",onFocus:"没有第三种了，你选一个吧",onCorrect:"输入正确"}).inputValidator({min:1,max:1,onError:"忘记选了,请确认"}).defaultPassed();
+	
+	
+	$("#pid").formValidator({ajax:true,onShow:"请输入15或18位的身份证",onFocus:"输入15或18位的身份证",onCorrect:"输入正确"}).functionValidator({fun:isCardID});
+	$("#email").formValidator({onShow:"请输入邮箱如:xxx@sina.cn",onFocus:"邮箱6-100个字符,输入正确了才能离开焦点",onCorrect:"恭喜你,你输对了"}).inputValidator({min:6,max:100,onError:"你输入的邮箱长度非法,请确认"}).regexValidator({regExp:"^([\\w-.]+)@(([[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.)|(([\\w-]+.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(]?)$",onError:"你输入的邮箱格式不正确"});
+	$("#city").formValidator({onShow:"请选择你的籍贯",onFocus:"籍贯必须选择",onCorrect:"谢谢你的配合"}).inputValidator({min:1,onError: "你是不是忘记选择籍贯了!"}).defaultPassed();
+	$("#did").formValidator({onShow:"请选择你所在部门",onFocus:"部门必须选择",onCorrect:"谢谢你的配合"}).inputValidator({min:1,onError: "你是不是忘记选择部门了!"}).defaultPassed();
+	$("#jid").formValidator({onShow:"请选择你的职位",onFocus:"职位必须选择",onCorrect:"谢谢你的配合"}).inputValidator({min:1,onError: "你是不是忘记选择职位了!"}).defaultPassed();
+	
+	
+	//$(":checkbox[name='rid']").formValidator({tipID:"ridTip",onShow:"请赋予其角色（至少选一个）",onFocus:"你至少设置1个",onCorrect:"谢谢你的合作"}).inputValidator({min:1,onError:"你是不是忘了为其设置角色了!"});
+	$("#mobile").formValidator({empty:true,onShow:"请输入你的手机号码，可以为空哦",onFocus:"你要是输入了，必须输入正确",onCorrect:"谢谢你的合作",onEmpty:"你真的不想留手机号码啊？"}).inputValidator({min:11,max:11,onError:"手机号码必须是11位的,请确认"}).regexValidator({regExp:"mobile",dataType:"enum",onError:"你输入的手机号码格式不正确"});;
+	$("#telephone").formValidator({empty:true,onShow:"请输入你的联系电话，可以为空哦",onFocus:"格式例如：0577-88888888",onCorrect:"谢谢你的合作",onEmpty:"你真的不想留联系电话了吗？"}).regexValidator({regExp:"^(([0\\+]\\d{2,3}-)?(0\\d{2,3})-)?(\\d{7,8})(-(\\d{3,}))?$",onError:"你输入的联系电话格式不正确"});
+	$("#address").formValidator({onShow:"请输入你的住址。",onFocus:"至少要输入2个汉字或4个字符",onCorrect:"谢谢你的合作"}).inputValidator({min:4,onError:"你是不是忘记填写住址了!"});
+	$("#realname").formValidator({onShow:"请输入你的姓名。",onFocus:"至少要输入2个汉字或4个字符",onCorrect:"谢谢你的合作"}).inputValidator({min:4,onError:"你是不是忘记填写姓名了!"});
+	$("#rid").formValidator({relativeID:"qq5",tipID:"ridTip",tipCss :{"left":"116px"},onShow:"请为其授予角色（至少选一个）",onFocus:"你至少选择1个",onCorrect:"恭喜你,你选对了"}).inputValidator({min:1,onError:"你选的个数不对"});
+});
+
+</script>
+ 
+  </head>
+  
+  <body>
+   <table width="100%" border="0" cellspacing="0" cellpadding="0" >
+  <tr>
+    <td height="30" background="main/tab/images/tab_05.gif"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="12" height="30"><img src="main/tab/images/tab_03.gif" width="12" height="30" /></td>
+        <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+          <tr>
+            <td width="46%" valign="middle"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td width="5%"><div align="center"><img src="main/tab/images/tb.gif" width="16" height="16" /></div></td>
+                <td width="95%" class="STYLE1"><span class="STYLE3">你当前的位置</span>：[用户中心]-[修改个人信息]</td>
+              </tr>
+            </table></td>
+            <td width="54%"><table border="0" align="right" cellpadding="0" cellspacing="0">
+              <tr>
+              </tr>
+            </table></td>
+          </tr>
+        </table></td>
+        <td width="16"><img src="main/tab/images/tab_07.gif" width="16" height="30" /></td>
+      </tr>
+    </table></td>
+  </tr>
+   <tr>
+    <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+      <td width="8" background="main/tab/images/tab_12.gif">&nbsp;</td>
+      <td>
+        <s:form action="user!onlyUpdate" name="form1" id="form1" theme="simple" namespace="/oa">
+          <s:hidden id="userid" name="userid"></s:hidden>
+          <table width="70%" border="0" cellpadding="0" cellspacing="1" bgcolor="b5d6e6" align="center">
+          <tr align="center"  height="30">
+		    <td colspan="3" background="main/tab/images/bg.gif" bgcolor="#FFFFFF">用户信息编辑</td>
+		  </tr>
+		  <tr height="30">
+		    <td width="37%" align="right" bgcolor="#FFFFFF">用户名：</td>
+		    <td width="39%" bgcolor="#FFFFFF"><s:textfield  id="username" name="username" readonly="%{userid>0?true:false}"/></td>
+		    <td width="24%" bgcolor="#FFFFFF"><div id="usernameTip" style="width:280px"></div></td>
+		  </tr>
+		  <tr height="30">
+		    <td align="right" bgcolor="#FFFFFF">真实姓名：</td>
+		    <td bgcolor="#FFFFFF"><s:textfield  id="realname" name="realname"/></td>
+		    <td bgcolor="#FFFFFF"><div id="realnameTip" style="width:280px"></div></td>
+		  </tr>
+		  <tr height="30" >
+		    <td align="right" bgcolor="#FFFFFF">所属部门：</td>
+		    <td bgcolor="#FFFFFF"><s:select id="did" list="datalist.{? #this.dpid==3}" name="deptno" headerKey="0" headerValue="请选择" listKey="did" listValue="dname"></s:select></td>
+		    <td bgcolor="#FFFFFF"><div id="didTip" style="width:280px"></div></td>
+		  </tr>
+		  <tr height="30">
+		    <td align="right" bgcolor="#FFFFFF" >岗位：</td>
+		    <td bgcolor="#FFFFFF" ><s:select id="jid" list="datalist.{? #this.dpid==2}" name="jobno" headerKey="0" headerValue="请选择" listKey="did" listValue="dname"></s:select>
+		    </td>
+		    <td bgcolor="#FFFFFF" ><div id="jidTip" style="width:280px"></div></td>
+		  </tr>
+		  <tr height="30">
+		    <td align="right" bgcolor="#FFFFFF">性别：</td>
+		    <td bgcolor="#FFFFFF"><s:radio id="sex" name="sex" list="#{'1':'男','2':'女'}"></s:radio> </td>
+		    <td bgcolor="#FFFFFF"><div id="sexTip" style="width:280px"></div></td>
+		  </tr>
+		  <tr height="30">
+		    <td align="right" bgcolor="#FFFFFF" >婚否：</td>
+		    <td bgcolor="#FFFFFF"><s:radio id="married" name="married" list="#{'1':'未婚','2':'已婚' }"></s:radio> </td>
+		    <td bgcolor="#FFFFFF"><div id="marriedTip" style="width:280px"></div></td>
+		  </tr>
+		  <tr bgcolor="#FFFFFF" height="30">
+		    <td align="right">籍贯：</td>
+		    <td>
+		    	<s:select list="datalist.{? #this.dpid==1}" id="city" name="city" headerKey="" headerValue="请选择" listKey="did" listValue="dname"></s:select>
+		    </td>
+		    <td><div id="cityTip" style="width:280px"></div></td>
+		  </tr>
+		  <tr bgcolor="#FFFFFF" height="30">
+		    <td align="right">身份证：</td>
+		    <td><s:textfield id="pid" name="idcard"></s:textfield></td>
+		    <td><div id="pidTip" style="width:280px"></div></td>
+		  </tr>
+		  <tr bgcolor="#FFFFFF" height="30" >
+		    <td align="right">联系电话：</td>
+		    <td><s:textfield id="telephone" name="telephone"></s:textfield></td>
+		    <td><div id="telephoneTip" style="width:280px"></div></td>
+		  </tr>
+		  <tr bgcolor="#FFFFFF" height="30">
+		    <td align="right">e-mail：</td>
+		    <td><s:textfield id="email" name="email"></s:textfield></td>
+		    <td><div id="emailTip" style="width:280px"></div></td>
+		  </tr>
+		  <tr bgcolor="#FFFFFF" height="30">
+		    <td align="right">手机：</td>
+		    <td><s:textfield id="mobile" name="mobilephone"></s:textfield></td>
+		    <td><div id="mobileTip" style="width:280px"/></div></td>
+		  </tr>
+		  <tr bgcolor="#FFFFFF" height="30">
+		    <td align="right">住址：</td>
+		    <td><s:textfield id="address" name="address"></s:textfield></td>
+		    <td><div id="addressTip" style="width:280px"></div></td>
+		  </tr>
+		  <tr align="center" bgcolor="#FFFFFF" height="30">
+		    <td colspan="2"><s:submit value="修改"></s:submit><s:reset value="重置"></s:reset><input type="button" onclick="history.back();" value="返回"></td>
+		    <td bgcolor="#FFFFFF"></td>
+		  </tr>
+          </table>
+       </s:form>
+      </td>
+      <td width="8" background="main/tab/images/tab_15.gif">&nbsp;</td>
+      </tr>
+  </table>
+  </td>
+  </tr>
+  </table>
+  </body>
+</html>

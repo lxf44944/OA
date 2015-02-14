@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.1//EN" "http://struts.apache.org/dtds/struts-2.1.dtd">
+<struts>
+	<constant name="struts.configuration.xml.reload" value="true" />
+	<constant name="struts.custom.i18n.resources" value="fileupload_error" />
+
+	<package name="emailPack" extends="struts-default" namespace="/email">
+		<action name="emailAction" class="email.action.EmailAction">
+			<interceptor-ref name="fileUpload">
+				<!-- 配置允许上传文件单个文件的大小 单位是字节 默认2M  此为5M-->
+				<param name="maximumSize">5242880</param>
+			</interceptor-ref>
+			<!-- 不要忘了导入默认的连接链 -->
+			<interceptor-ref name="defaultStack"></interceptor-ref>
+		
+			<result name="success">${request.contextPath}/jsp/email/emailIndex.jsp</result>
+			<result name="addemail">${request.contextPath}/jsp/email/addemail.jsp</result>
+			<result name="read">${request.contextPath}/jsp/email/reademail.jsp</result>
+			<result name="emaillist">${request.contextPath}/jsp/email/emaillist.jsp</result>
+			<result name="input">${request.contextPath}/jsp/error.jsp</result>
+			
+			
+			
+			<result name="turnlist" type="redirectAction">
+				<param name="actionName">emailAction</param>
+				<param name="method">emaillist</param>
+				<param name="type">${#parameters.site}</param>
+				<param name="curPage">${#parameters.curPage}</param>
+			</result>
+			<result name="tolist" type="redirectAction">
+				<param name="actionName">emailAction</param>
+				<param name="method">emaillist</param>
+				<param name="type">${type}</param>
+			</result>
+			
+		</action>
+		<action name="emailDownLoadAction" class="email.action.DownLoadAction">
+			<result type="stream" name="success">
+				<param name="contentDisposition">attachment;filename="${fileName}"</param>
+			</result>
+		</action>
+	</package>
+	<package name="jsonPack" extends="json-default" namespace="/userjson">
+		<action name="jsonAction" class="email.action.EmailAction" method="json">
+			<result name="json" type="json">
+				<param name="includeProperties">users.*</param>
+			</result>
+		</action>
+	</package>
+	
+
+</struts>    

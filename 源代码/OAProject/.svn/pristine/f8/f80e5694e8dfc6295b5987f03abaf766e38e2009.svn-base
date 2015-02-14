@@ -1,0 +1,34 @@
+package tools;
+import java.util.*;
+import java.text.*;
+
+public class GetTime {
+	
+	//以下是利用Calendar类来实现日期时间的，和Date类相比较比较简单
+
+	   public static Date time() {
+	     
+	      Calendar ca = Calendar.getInstance();
+	      int year = ca.get(Calendar.YEAR);//获取年份
+	      int month=ca.get(Calendar.MONTH);//获取月份
+	      int day=ca.get(Calendar.DATE);//获取日
+	      int minute=ca.get(Calendar.MINUTE);//分
+	      int hour=ca.get(Calendar.HOUR_OF_DAY);//小时
+	      int second=ca.get(Calendar.SECOND);//秒
+	      int WeekOfYear = ca.get(Calendar.DAY_OF_WEEK);//星期
+	      
+	      
+	      String str=year+"/"+month+"/"+day+" "+hour+":"+minute+":"+second;
+	      
+	      SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+	      Date date = null;
+	      try {
+	       date = format.parse(str);
+	      } catch (ParseException e) {
+	       e.printStackTrace();
+	      }
+	      return date;
+	   }
+
+	
+}

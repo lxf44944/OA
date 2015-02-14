@@ -1,0 +1,142 @@
+package email.action;
+
+
+import java.io.File;
+import java.io.PrintWriter;
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+
+import org.apache.struts2.ServletActionContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import pojo.TEmail;
+
+import com.opensymphony.xwork2.ActionSupport;
+
+import email.dao.TEmailDAO;
+import email.service.inf.EmailServiceInf;
+
+public class EmailAction extends ActionSupport{
+	private TEmail email;
+	private EmailServiceInf emailService;
+	private List<File> emailFile;
+	private List<String> emailFileFileName;
+	private int type = 0;//状态  0：草稿箱   1：已发送    2：收件箱     3：垃圾箱    4 ：彻底删除
+	private String receiveUserNames;
+	
+	
+	
+	
+	public int getType() {
+		return type;
+	}
+
+	public void setType(int type) {
+		this.type = type;
+	}
+
+	public String getReceiveUserNames() {
+		return receiveUserNames;
+	}
+
+	public void setReceiveUserNames(String receiveUserNames) {
+		this.receiveUserNames = receiveUserNames;
+	}
+
+	public EmailServiceInf getEmailService() {
+		return emailService;
+	}
+	
+	public List<File> getEmailFile() {
+		return emailFile;
+	}
+
+	public void setEmailFile(List<File> emailFile) {
+		this.emailFile = emailFile;
+	}
+
+	public List<String> getEmailFileFileName() {
+		return emailFileFileName;
+	}
+
+	public void setEmailFileFileName(List<String> emailFileFileName) {
+		this.emailFileFileName = emailFileFileName;
+	}
+
+	public void setEmailService(EmailServiceInf emailService) {
+		this.emailService = emailService;
+	}
+
+	public TEmail getEmail() {
+		return email;
+	}
+
+	public void setEmail(TEmail email) {
+		this.email = email;
+	}
+	@Override
+	public String execute() throws Exception {
+		
+		return SUCCESS;
+	}
+	public String add() throws Exception {
+		
+		emailService.save(email, type, emailFile, emailFileFileName, receiveUserNames);
+		return SUCCESS;
+	}
+	public String update() throws Exception {
+		emailService.update(email, type, emailFile, emailFileFileName, receiveUserNames);
+		return SUCCESS;
+	}
+	public String readSend() throws Exception {
+		emailService.update(email, type, emailFile, emailFileFileName, receiveUserNames);
+		return SUCCESS;
+	}
+	public String readReceive() throws Exception {
+		ServletActionContext.getRequest().setAttribute("receiveEmail", emailService.getReceiveEmail(5, "222"));
+		return "readReceive";
+	}
+	public String drafts() throws Exception {
+		email = emailService.getEmail(email.getNemailid());
+		receiveUserNames = emailService.getReceiveUserNames(email.getNemailid());
+		return "drafts";
+	}
+	//改变邮件状态  删除和还原
+	public String delete() throws Exception {
+		//获取当前登录用户名
+		//
+		//String userName = "222";
+		
+		emailService.deleteEmail(email.getNemailid(), type);
+		return SUCCESS;
+	}
+	
+	
+	/**
+	 * Ajax 删除附件
+	 */
+	public String ajaxDeleteFile() throws Exception {
+		HttpServletRequest request = ServletActionContext.getRequest();
+		HttpServletResponse response = ServletActionContext.getResponse();
+		int nfileId = Integer.parseInt(request.getParameter("nfileId"));
+		response.setCharacterEncoding("UTF-8");
+		response.setContentType("text/html");
+		PrintWriter out = response.getWriter();
+		if(emailService.deleteFile(nfileId)){
+			out.println("1");
+		}else{
+			out.println("0");
+		}
+		out.flush();
+		out.close();
+		
+		return NONE;
+	}
+	
+	
+
+}

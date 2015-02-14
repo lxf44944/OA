@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.1//EN" "http://struts.apache.org/dtds/struts-2.1.dtd">
+<struts>
+
+	<package name="sysPack" extends="struts-default" namespace="/system">
+		<action name="emailAction" class="email.action.EmailAction">
+			<result name="success">${request.contextPath}/jsp/email/emailIndex.jsp</result>
+			<result name="drafts">${request.contextPath}/jsp/email/addemail.jsp</result>
+			<result name="readReceive">${request.contextPath}/jsp/email/readreceive.jsp</result>
+		</action>
+		<action name="emailDownLoadAction" class="email.action.DownLoadAction">
+			<result type="stream" name="success">
+				<param name="contentDisposition">attachment;filename="${fileName}"</param>
+			</result>
+		</action>
+	</package>
+	
+
+</struts>    

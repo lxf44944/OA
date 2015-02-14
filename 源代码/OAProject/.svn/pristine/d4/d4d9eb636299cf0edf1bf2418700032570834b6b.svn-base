@@ -1,0 +1,159 @@
+package tips.dao;
+
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.hibernate.Hibernate;
+import org.hibernate.HibernateException;
+import org.hibernate.LockMode;
+import org.hibernate.SQLQuery;
+import org.hibernate.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.orm.hibernate3.HibernateCallback;
+import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+
+import pojo.TTips;
+
+/**
+ * A data access object (DAO) providing persistence and search support for TTips
+ * entities. Transaction control of the save(), update() and delete() operations
+ * can directly support Spring container-managed transactions or they can be
+ * augmented to handle user-managed Spring transactions. Each of these methods
+ * provides additional information for how to configure it for the desired type
+ * of transaction control.
+ * 
+ * @see pojo.TTips
+ * @author MyEclipse Persistence Tools
+ */
+
+public class TTipsDAO extends HibernateDaoSupport {
+	private static final Logger log = LoggerFactory.getLogger(TTipsDAO.class);
+	// property constants
+	public static final String TSHOWPOST = "tshowpost";
+	public static final String TSHOWEMAIL = "tshowemail";
+	public static final String TISSHOW = "tisshow";
+	public static final String SHOWTIME = "showtime";
+
+	protected void initDao() {
+		// do nothing
+	}
+
+	public void save(TTips transientInstance) {
+		log.debug("saving TTips instance");
+		try {
+			getHibernateTemplate().save(transientInstance);
+			log.debug("save successful");
+		} catch (RuntimeException re) {
+			log.error("save failed", re);
+			throw re;
+		}
+	}
+
+	public void delete(TTips persistentInstance) {
+		log.debug("deleting TTips instance");
+		try {
+			getHibernateTemplate().delete(persistentInstance);
+			log.debug("delete successful");
+		} catch (RuntimeException re) {
+			log.error("delete failed", re);
+			throw re;
+		}
+	}
+
+	public TTips findById(java.lang.Integer id) {
+		log.debug("getting TTips instance with id: " + id);
+		try {
+			System.out.println("id:"+id);
+			TTips instance = (TTips) getHibernateTemplate().get("pojo.TTips",
+					id);
+			
+			return instance;
+		} catch (RuntimeException re) {
+			log.error("get failed", re);
+			throw re;
+		}
+	}
+
+	public List findAll() {
+		log.debug("finding all TTips instances");
+		try {
+			String queryString = "from TTips";
+			return getHibernateTemplate().find(queryString);
+		} catch (RuntimeException re) {
+			log.error("find all failed", re);
+			throw re;
+		}
+	}
+
+	public int emailCount(final String username) {
+		log.debug("finding emailCount");
+		try {
+
+			int count = this.getHibernateTemplate().execute(
+					new HibernateCallback<Integer>() {
+
+						@Override
+						public Integer doInHibernate(Session session)
+								throws HibernateException, SQLException {
+							// TODO Auto-generated method stub
+							SQLQuery query = (SQLQuery) session
+									.createSQLQuery(
+											"select count(t.emailid) as count from T_RECEIVEEMAIL t where  t.isread=0 and t.isdel=0 and t.username=?")
+									.setParameter(0, username);
+							query.addScalar("count", Hibernate.INTEGER);
+							int count = (Integer) query.uniqueResult();
+
+							return count;
+						}
+					});
+
+			return count;
+		} catch (RuntimeException re) {
+			log.error("find emailCount failed", re);
+			throw re;
+		}
+	}
+
+	public int postCount(final int userid) {
+		log.debug("finding postCount");
+		try {
+			int count = this.getHibernateTemplate().execute(
+					new HibernateCallback<Integer>() {
+
+						@Override
+						public Integer doInHibernate(Session session)
+								throws HibernateException, SQLException {
+							// TODO Auto-generated method stub
+							SQLQuery query = (SQLQuery) session
+									.createSQLQuery(
+											"select count(t.postid) as count  from T_POST_USER t where t.nisread=0 and t.suserid=?")
+									.setParameter(0, userid);
+							query.addScalar("count", Hibernate.INTEGER);
+							int count = (Integer) query.uniqueResult();
+
+							return count;
+						}
+					});
+
+			return count;
+		} catch (RuntimeException re) {
+			log.error("find postCount failed", re);
+			throw re;
+		}
+	}
+
+	public void attachDirty(TTips instance) {
+		log.debug("attaching dirty TTips instance");
+		try {
+			getHibernateTemplate().saveOrUpdate(instance);
+			log.debug("attach successful");
+		} catch (RuntimeException re) {
+			log.error("attach failed", re);
+			throw re;
+		}
+	}
+
+}

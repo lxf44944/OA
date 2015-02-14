@@ -1,0 +1,19 @@
+|--安装包--war文件
+|--安装包--server.xml文件
+
+(注意tomcat的版本信息必须是6.0.18)
+
+//1打包之前需要把开发中所有用到的jar放到WebRoot/WEB-INF/lib
+//2把web工程导出为war文件
+//3在server.xml文件中配置Context节点及数据源(使用JNDI方式获得数据源)
+//4server.xml中配置连接池
+<Context path="/工程名" docBase="war文件名字" >		
+			<Resource auth="Container" 
+				  name="jdbc/oracle" 
+				  type="javax.sql.DataSource" 
+				  maxWait="10000" 
+				  maxIdle="20" 
+				  maxActive="50"
+				  username="web1202" 
+				  password="oracle" 				  driverClassName="oracle.jdbc.driver.OracleDriver"				  url="jdbc:oracle:thin:@127.0.0.1:1521:orcl"/>		
+		</Context>

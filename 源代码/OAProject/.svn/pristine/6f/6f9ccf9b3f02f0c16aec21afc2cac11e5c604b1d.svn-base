@@ -1,0 +1,75 @@
+package pojo;
+
+
+
+/**
+ * TReceiveemail entity. @author MyEclipse Persistence Tools
+ */
+
+public class TReceiveemail  implements java.io.Serializable {
+
+
+    // Fields    
+
+     private TReceiveemailId id;
+     private Boolean nisread;
+     private Boolean nisdel;
+     
+
+    // Constructors
+
+    /** default constructor */
+    public TReceiveemail() {
+    }
+
+	/** minimal constructor */
+    public TReceiveemail(TReceiveemailId id) {
+        this.id = id;
+    }
+    
+    /** full constructor */
+    public TReceiveemail(TReceiveemailId id, Boolean nisread, Boolean nisdel) {
+        this.id = id;
+        this.nisread = nisread;
+        this.nisdel = nisdel;
+    }
+
+   
+    // Property accessors
+    
+
+    public TReceiveemailId getId() {
+        return this.id;
+    }
+    
+   
+
+	public void setId(TReceiveemailId id) {
+        this.id = id;
+    }
+
+    public Boolean getNisread() {
+        return this.nisread;
+    }
+    
+    public void setNisread(Boolean nisread) {
+        this.nisread = nisread;
+    }
+
+    public Boolean getNisdel() {
+        return this.nisdel;
+    }
+    
+    public void setNisdel(Boolean nisdel) {
+        this.nisdel = nisdel;
+    }
+   
+
+
+
+
+
+
+
+
+}

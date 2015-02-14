@@ -1,0 +1,51 @@
+package post.test;
+
+import java.util.List;
+
+import org.hibernate.Hibernate;
+import org.hibernate.Session;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+
+import post.inf.PostFileInf;
+import post.inf.PostInf;
+import post.pojo.TPost;
+import post.pojo.TPostFile;
+
+
+
+public class Test extends HibernateDaoSupport {
+
+	/**
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		// Session sessio
+		ApplicationContext applicationContext = new ClassPathXmlApplicationContext(
+				"post_applicationContext.xml");
+//		PostInf dao = (PostInf) applicationContext
+//				.getBean("postDAO");
+		PostFileInf dao = (PostFileInf) applicationContext
+		.getBean("postfileDAO");
+		List<TPostFile> files=dao.findByProperty("postid",53);
+		for (TPostFile tPostFile : files) {
+			System.out.println(tPostFile.getSoldname());
+		}
+		
+		// dao.save(new TBatch("batch4"));
+//		TPost post=new TPost();
+//		post.setStitle("bb");
+//		post.setScontent(Hibernate.createClob(" "));
+//		
+//		dao.save(post,"sasdasdasdasdsadsadasdasdasdas");
+		
+		
+		
+		
+		
+
+	}
+
+}

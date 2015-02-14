@@ -1,0 +1,166 @@
+package pojo;
+
+import java.sql.Clob;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+
+
+/**
+ * TEmail entity. @author MyEclipse Persistence Tools
+ */
+
+public class TEmail  implements java.io.Serializable {
+
+
+    // Fields    
+
+     private Integer nemailid;
+     private String senduser;
+     private String stitle;
+     private Date senddate;
+     private Boolean nisfile;
+     private String scontent;
+    // private Clob content;
+     private Boolean nemailmode;
+     private int isdel;
+     private Set<TEmailFile> emailFiles = new HashSet<TEmailFile>(0);
+
+
+    // Constructors
+
+    /** default constructor */
+    public TEmail() {
+    }
+
+    
+    /** full constructor */
+    public TEmail(String senduser, String stitle, Date senddate, Boolean nisfile, Boolean nemailmode, int isdel) {
+        this.senduser = senduser;
+        this.stitle = stitle;
+        this.senddate = senddate;
+        this.nisfile = nisfile;
+        this.nemailmode = nemailmode;
+        this.isdel = isdel;
+    }
+
+   
+    // Property accessors
+
+    
+    public Integer getNemailid() {
+        return this.nemailid;
+    }
+    
+    
+  /*  public String getContent() {
+		return content;
+	}
+
+
+	public void setContent(String content) {
+		this.content = content;
+	}*/
+
+
+
+
+	public void setNemailid(Integer nemailid) {
+        this.nemailid = nemailid;
+    }
+
+    public String getSenduser() {
+        return this.senduser;
+    }
+    
+    public void setSenduser(String senduser) {
+        this.senduser = senduser;
+    }
+
+    public String getStitle() {
+        return this.stitle;
+    }
+    
+    public void setStitle(String stitle) {
+        this.stitle = stitle;
+    }
+
+  
+
+    public Boolean getNisfile() {
+        return this.nisfile;
+    }
+    
+    public void setNisfile(Boolean nisfile) {
+        this.nisfile = nisfile;
+    }
+
+  
+
+    public Boolean getNemailmode() {
+        return this.nemailmode;
+    }
+    
+    public void setNemailmode(Boolean nemailmode) {
+        this.nemailmode = nemailmode;
+    }
+
+
+	public Date getSenddate() {
+		return senddate;
+	}
+
+
+	public void setSenddate(Date senddate) {
+		this.senddate = senddate;
+	}
+
+
+
+
+
+	public String getScontent() {
+		return scontent;
+	}
+
+
+	public void setScontent(String scontent) {
+		this.scontent = scontent;
+	}
+
+
+	public int getIsdel() {
+		return isdel;
+	}
+
+
+	public void setIsdel(int isdel) {
+		this.isdel = isdel;
+	}
+
+
+	public Set<TEmailFile> getEmailFiles() {
+		return emailFiles;
+	}
+
+
+	public void setEmailFiles(Set<TEmailFile> emailFiles) {
+		this.emailFiles = emailFiles;
+	}
+
+
+
+
+   
+
+
+   
+
+
+
+
+
+
+
+
+}

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.1//EN" "http://struts.apache.org/dtds/struts-2.1.dtd">
+<struts>
+	<constant name="struts.devMode" value="true" />
+	<constant name="struts.i18n.encoding" value="UTF-8" />
+	<include file="struts-user.xml"/>
+	<include file="struts-post.xml"/>
+	<include file="struts-email.xml"/>
+	<include file="struts-datadic-tips.xml"/>
+</struts>    

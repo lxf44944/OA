@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver">
+		</property>
+		<property name="url" value="jdbc:oracle:thin:@localhost:1521:orcl">
+		</property>
+		<property name="username" value="oapro"></property>
+		<property name="password" value="oapro"></property>
+	</bean>
+	<bean id="lobHandler" class="org.springframework.jdbc.support.lob.DefaultLobHandler" lazy-init="true"/>
+	
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+		<property name="dataSource">
+			<ref bean="dataSource" />
+		</property>
+		<property name="lobHandler" ref="lobHandler"/>
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">
+					org.hibernate.dialect.Oracle9Dialect
+				</prop>
+				<!-- <prop key="hibernate.show_sql">true</prop> -->
+			</props>
+		</property>
+		<property name="mappingResources">
+			<list>
+				<value>pojo/TDatadic.hbm.xml</value>
+				<value>pojo/TTips.hbm.xml</value>
+				<value>post/pojo/TPost.hbm.xml</value>
+				<value>post/pojo/TPostFile.hbm.xml</value>
+				<value>pojo/TUser.hbm.xml</value>
+				<value>post/pojo/TPostUser.hbm.xml</value>
+				<value>pojo/TRole.hbm.xml</value>
+				<value>pojo/TMenu.hbm.xml</value>
+				<value>pojo/TUserRole.hbm.xml</value>
+				<value>pojo/TRoleMenu.hbm.xml</value>		
+				<value>pojo/TEmail.hbm.xml</value>
+				<value>pojo/TEmailFile.hbm.xml</value>				
+				<value>pojo/TReceiveemail.hbm.xml</value>	
+
+			</list>
+		</property>
+	</bean>
+	<import resource="datadic_tips_applicationContext.xml" />
+	<import resource="email_applicationContext.xml" />
+	<import resource="post_applicationContext.xml" />
+	<import resource="user_applicationContext.xml" />
+</beans>

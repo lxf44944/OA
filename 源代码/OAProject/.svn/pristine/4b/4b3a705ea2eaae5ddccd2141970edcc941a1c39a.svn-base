@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.1//EN" "http://struts.apache.org/dtds/struts-2.1.dtd"><struts>
+  
+  	<package name="default" extends="json-default" namespace="/user">
+		<interceptors>
+			<!-- 注册拦截器 -->
+			<interceptor name="logininterceptor" class="user.interceptor.LoginInterceptor"></interceptor>
+			<!-- 注册拦截器栈 -->
+			<interceptor-stack name="logininterceptorStack">
+				<interceptor-ref name="logininterceptor"></interceptor-ref>
+					<interceptor-ref name="fileUpload">
+					<!-- 设置一个上传文件的最大字符数:5242880 -->
+					<param name="maximumSize">5242880</param>
+				</interceptor-ref>
+				<interceptor-ref name="defaultStack"></interceptor-ref>
+			
+			</interceptor-stack>			
+		</interceptors>
+		<!-- 配置该包下的所有Action的默认拦截器栈 -->
+		<default-interceptor-ref name="logininterceptorStack"></default-interceptor-ref>
+		<!-- 配置全局的result：改包下的所有action均可使用 -->	
+		<global-results>
+			<result name="login" type="redirectAction">
+				<param name="actionName">loginjsp</param>
+			</result>
+		</global-results>
+	</package>
+    <!-- 登录配置 -->
+	<package name="nlogin" extends="struts-default" >
+		<action name="loginjsp">
+			<result>/login.jsp</result>
+		</action>
+	    <action name="userlogin" class="user.action.LoginAction" >			
+			<result name="login">/jsp/user/error.jsp</result>		
+			<result name="success" type="redirectAction">index</result>			
+		</action>
+	</package>
+	<package name="login" extends="default" >	
+		<action name="index">
+			<result>/main/main.jsp</result>
+		</action>
+		
+		<action name="top">
+			<result>/main/top.jsp</result>
+		</action>
+		<action name="down">
+			<result>/main/down.jsp</result>
+		</action>
+		<action name="center">
+			<result>/main/center.jsp</result>
+		</action>
+		<action name="pagebar">
+			<result>/common/pagebar.jsp</result>
+		</action>
+	</package>
+	
+	<!-- 用户配置 -->
+	<package name="users" extends="default" namespace="/oa">
+         <action name="user" class="user.action.UserAction">
+			<result name="success">/jsp/user/message.jsp</result>
+			<result name="edit">/jsp/user/users/user_add.jsp</result>			
+			<result name="updatepwdjsp">/jsp/user/users/user_password.jsp</result>
+			<result name="onlyUpdateview">/jsp/user/users/user_update.jsp</result>
+			<result name="input">/jsp/user/error.jsp</result>	
+			<!--<result name="dotag">/WEB-INF/main/tab/tab.jsp</result>			
+			 <result name="onlyUpdate"></result> -->
+			<result name="msg" type="json">
+				<param name="root">tip</param>
+			</result>	
+	
+		</action>
+		<action name="userlist" class="user.action.UserListAction">
+			<result>/jsp/user/users/user_list.jsp</result>				
+		</action> 
+	</package>
+	
+	
+	<!-- 菜单配置 -->
+	<package name="menu" extends="default" namespace="/oa">
+		<action name="menulist" class="user.action.MenuListAction">
+			<result>/jsp/user/menu/menu_list.jsp</result>					
+		</action>		
+		<action name="menu" class="user.action.MenuAction">
+			<result name="success">/jsp/user/message.jsp</result>
+			<result name="edit">/jsp/user/menu/menu_editor.jsp</result>
+			<result name="input">/jsp/user/error.jsp</result>	
+			<result name="userrolemenu">/main/left.jsp</result>	
+		</action>		
+	</package>
+	
+	<!-- 角色配置 -->
+	<package name="roles" extends="default" namespace="/oa">
+		<action name="rolelist" class="user.action.RoleListAction">
+			<result>/jsp/user/role/role_list.jsp</result>					
+		</action>	
+		<action name="role" class="user.action.RoleAction">
+			<result name="edit">/jsp/user/role/role_editor.jsp</result>
+			<result name="success">/jsp/user/message.jsp</result>
+			<result name="input">/jsp/user/error.jsp</result>		
+		</action>		
+	</package>
+	
+	
+</struts>    

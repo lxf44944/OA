@@ -1,0 +1,43 @@
+@charset "utf-8";
+/* CSS Document */
+body{	
+	font-size:12px;
+	text-align:center;
+	background-color:#016AA9;
+	}
+#page{
+	width:980px;
+	text-align:center;
+	}
+#context{
+	width:886px;
+	height:339px;
+	background-image:url(../main/images/loginbg.gif);
+	margin-top:175px;
+	margin-left: 200px;
+	}
+#formdiv{
+	margin-top:168px;
+	}
+.inputtext{
+	width:120px;
+	height:17px;
+	background-color:#292929;
+	border:solid 1px #7dbad7;
+	color:#6cd0ff;
+	margin-top:168px;
+	}
+.inputtext2{
+	width:120px;
+	height:17px;
+	background-color:#292929;
+	border:solid 1px #7dbad7;
+	color:#6cd0ff;
+	}
+#code{
+	width:48px;
+	height:17px;
+	background-color:#292929;
+	border:solid 1px #7dbad7;
+	color:#6cd0ff;
+	}

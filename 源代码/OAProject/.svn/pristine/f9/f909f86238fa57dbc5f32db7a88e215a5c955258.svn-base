@@ -1,0 +1,75 @@
+package pojo;
+
+
+
+/**
+ * TReceiveemailId entity. @author MyEclipse Persistence Tools
+ */
+
+public class TReceiveemailId  implements java.io.Serializable {
+
+
+    // Fields    
+
+     private String susername;
+     private Integer nemailid;
+
+
+    // Constructors
+
+    /** default constructor */
+    public TReceiveemailId() {
+    }
+
+    
+    /** full constructor */
+    public TReceiveemailId(String susername, Integer nemailid) {
+        this.susername = susername;
+        this.nemailid = nemailid;
+    }
+
+   
+    // Property accessors
+
+    public String getSusername() {
+        return this.susername;
+    }
+    
+    public void setSusername(String susername) {
+        this.susername = susername;
+    }
+
+    public Integer getNemailid() {
+        return this.nemailid;
+    }
+    
+    public void setNemailid(Integer nemailid) {
+        this.nemailid = nemailid;
+    }
+   
+
+
+
+   public boolean equals(Object other) {
+         if ( (this == other ) ) return true;
+		 if ( (other == null ) ) return false;
+		 if ( !(other instanceof TReceiveemailId) ) return false;
+		 TReceiveemailId castOther = ( TReceiveemailId ) other; 
+         
+		 return ( (this.getSusername()==castOther.getSusername()) || ( this.getSusername()!=null && castOther.getSusername()!=null && this.getSusername().equals(castOther.getSusername()) ) )
+ && ( (this.getNemailid()==castOther.getNemailid()) || ( this.getNemailid()!=null && castOther.getNemailid()!=null && this.getNemailid().equals(castOther.getNemailid()) ) );
+   }
+   
+   public int hashCode() {
+         int result = 17;
+         
+         result = 37 * result + ( getSusername() == null ? 0 : this.getSusername().hashCode() );
+         result = 37 * result + ( getNemailid() == null ? 0 : this.getNemailid().hashCode() );
+         return result;
+   }   
+
+
+
+
+
+}

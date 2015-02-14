@@ -1,0 +1,143 @@
+package user.service.imple;
+
+import java.util.List;
+
+
+
+import pojo.TDatadic;
+import pojo.TMenu;
+import pojo.TUser;
+import pojo.TUserRole;
+import pojo.TUserRoleId;
+
+import user.dao.PageModel;
+import user.dao.UserDAO;
+import user.dao.UserRoleDAO;
+import user.service.UserService;
+
+public class UserServiceImple implements UserService{
+	
+	private UserDAO userDAO;
+	
+    private UserRoleDAO userRoleDAO;
+    
+	public UserRoleDAO getUserRoleDAO() {
+		return userRoleDAO;
+	}
+
+	public void setUserRoleDAO(UserRoleDAO userRoleDAO) {
+		this.userRoleDAO = userRoleDAO;
+	}
+
+	@Override
+	public boolean checkUsername(String username) {
+		return this.userDAO.checkUsername(username);
+	}
+
+	@Override
+	public int deleteRole(int userid) {
+		return this.userRoleDAO.deleteRole(userid);
+	}
+
+	@Override
+	public boolean dostatus(int userid, int freeze) {
+		return this.userDAO.dostatus(userid, freeze);
+	}
+
+	@Override
+	public TUser findByUserid(int userid) {
+		return this.userDAO.findByUserid(userid);
+	}
+
+	@Override
+	public List findRidByUserid(int userid) {
+		return this.userRoleDAO.findRidByUserid(userid);
+	}
+
+	@Override
+	public int findUserByUserId() {
+		return this.userDAO.findUserByUserId();
+	}
+
+	
+
+	@Override
+	public void save(TUser user, List list) {
+		this.userDAO.save(user);
+		int userid = this.userDAO.findMaxUserid();
+		for (int i = 0; i < list.size(); i++) {
+			TUserRoleId roleid = new TUserRoleId();
+			int id = (Integer)list.get(i);
+			roleid.setRoleid(id);
+			roleid.setUserid(userid);
+			TUserRole userRole = new TUserRole();
+			userRole.setId(roleid);
+			this.userRoleDAO.save(userRole);
+		}
+	}
+
+	@Override
+	public void update(TUser user, List list) {
+		this.userDAO.update(user);
+		for (int i = 0; i < list.size(); i++) {
+			TUserRoleId roleid = new TUserRoleId();
+			int id = (Integer)list.get(i);
+			roleid.setRoleid(id);
+			roleid.setUserid(user.getUserid());
+			TUserRole userRole = new TUserRole();
+			userRole.setId(roleid);
+			this.userRoleDAO.save(userRole);
+		}
+	}
+
+	@Override
+	public void update(TUser user) {
+		this.userDAO.update(user);
+	}
+
+	@Override
+	public void updatepwd(int userid, String password) {
+		this.userDAO.updatepwd(userid, password);
+	}
+
+	@Override
+	public TUser findByUsername(String username) {
+		return this.userDAO.findUserbeanByUsername(username);
+	}
+
+	@Override
+	public List<TMenu> findUserRoleMenu(int userid) {
+		
+		return this.userDAO.findRidByUserid(userid);
+	}
+
+	@Override
+	public boolean isExit(TUser userBean) {
+		
+		return this.userDAO.isExit(userBean);
+	}
+
+	public UserDAO getUserDAO() {
+		return userDAO;
+	}
+
+	public void setUserDAO(UserDAO userDAO) {
+		this.userDAO = userDAO;
+	}
+
+	@Override
+	public PageModel search(TUser userBean, int currentPage, int pageSize) {
+		
+		return this.userDAO.search(userBean, currentPage, pageSize);
+	}
+
+	@Override
+	public List<TDatadic> query() {
+		
+		return this.userDAO.query();
+	}
+
+	
+	
+
+}

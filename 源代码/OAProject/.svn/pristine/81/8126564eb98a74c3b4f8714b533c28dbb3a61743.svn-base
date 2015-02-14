@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.1//EN" "http://struts.apache.org/dtds/struts-2.1.dtd">
+<struts>
+	
+<package name="tipsPack" extends="struts-default" namespace="/tips">
+	<action name="setTipsAction" class="tips.action.SetTipsAction">
+		<result name="success" type="redirect">/index.jsp</result>
+		<result name="error">/jsp/error.jsp</result>
+	</action>
+	<action name="tipCountAction" class="tips.action.TipCountAction"></action>
+</package>
+
+
+
+</struts>    

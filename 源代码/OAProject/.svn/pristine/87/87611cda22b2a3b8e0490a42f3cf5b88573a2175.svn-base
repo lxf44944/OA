@@ -1,0 +1,129 @@
+<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
+<%
+String path = request.getContextPath();
+String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
+%>
+<%@taglib uri="/struts-tags" prefix="s"%>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <base href="<%=basePath%>">
+    
+    <title>菜单栏</title>
+    
+	<meta http-equiv="pragma" content="no-cache">
+	<meta http-equiv="cache-control" content="no-cache">
+	<meta http-equiv="expires" content="0">    
+	<meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+	<meta http-equiv="description" content="This is my page">
+	<link href="css/main.css" rel="stylesheet" type="text/css">
+	<style type="text/css">
+<!--
+body {
+	margin-left: 0px;
+	margin-top: 0px;
+	margin-right: 0px;
+	margin-bottom: 0px;
+}
+.STYLE2 {color: #43860c; font-size: 12px; }
+.STYLE3 {
+	color: #1E5494;
+	font-weight: bold;
+	FONT-SIZE: 12px;
+}
+
+a:link {font-size:12px; text-decoration:none; color:#43860c;}
+a:visited {font-size:12px; text-decoration:none; color:#43860c;}
+a:hover{font-size:12px; text-decoration:none; color:#FF0000;}
+-->
+</style>
+	<SCRIPT language=JavaScript>
+function showsubmenu(sid)
+{
+whichEl = "submenu" + sid;
+whichEl=document.getElementById(whichEl);
+if (whichEl.style.display == "none")
+{
+	whichEl.style.display="";
+}
+else
+{
+whichEl.style.display="none";
+}
+}
+</SCRIPT>
+</head>
+<body>
+<table width="177" height="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr>
+    <td valign="top">
+	<table width="100%" border="0" cellspacing="0" cellpadding="0" style="table-layout:fixed">
+      <tr>
+        <td height="20" background="main/images/main_40.gif" style="font-size: 12px;color: #FFFFFF;" align="center">&nbsp;管理菜单</td>
+      </tr>
+     <tr>
+        <td height="80" style="background-image:url(main/images/main_23.gif); background-repeat:repeat-x;">
+		<table width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+          <tr>
+            <td height="45"><div align="center"><a href="tip!init" target="I1"><img src="main/images/main_26.gif" name="Image1" width="40" height="40" border="0" id="Image1" onmouseover="MM_swapImage('Image1','','images/main_26_1.gif',1)" onmouseout="MM_swapImgRestore()" /></a></div></td>
+            <td><div align="center"><a href="user!updatepwdview" target="I1"><img src="main/images/main_28.gif" name="Image2" width="40" height="40" border="0" id="Image2" onmouseover="MM_swapImage('Image2','','images/main_29_1.gif',1)" onmouseout="MM_swapImgRestore()" /></a></div></td>
+            <td><div align="center"><a href="user!onlyUpdateview" target="I1"><img src="main/images/main_31.gif" name="Image3" width="40" height="40" border="0" id="Image3" onmouseover="MM_swapImage('Image3','','images/main_31_1.gif',1)" onmouseout="MM_swapImgRestore()" /></a></div></td>
+          </tr>
+          <tr>
+            <td height="25"><div align="center" class="STYLE2"><a href="tip!init" target="I1">小贴士</a></div></td>
+            <td><div align="center" class="STYLE2"><a href="user!updatepwdview" target="I1">密码</a></div></td>
+            <td><div align="center" class="STYLE2"><a href="user!onlyUpdateview" target="I1">个人信息</a></div></td>
+          </tr>
+        </table>
+		</td>
+   	</tr>
+    <tr>
+        <td  style="line-height:4px; background:url(main/images/main_38.gif)">&nbsp;</td>
+    </tr>
+    <tr>
+        <td>
+			<table width="98%" border="0" cellpadding="0" cellspacing="0" background="images/tablemde.jpg">
+ <s:iterator value="menulist.{?#this.pid==0}" var="max">
+  <tr>
+    <td height="5" background="main/images/tableline_top.jpg" bgcolor="#16ACFF"></td>
+  </tr>
+  <tr>
+    <td><TABLE width="97%" border=0 align=right cellPadding=0 cellSpacing=0 class=leftframetable>
+      <TBODY>
+        <TR>
+          <TD height="25" style="background:url(main/images/main_47.gif) no-repeat">
+            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <TD width="20"></TD>
+				<TD class=STYLE3 style="CURSOR: hand" onclick=showsubmenu(${menuid}); height=25><span class="STYLE3"><s:property value="#max.menuname"/></span></TD>        	  
+              </tr>
+            </table>            </TD>
+          </TR>
+        <TR>
+          <TD><TABLE id="submenu${menuid }" cellSpacing=0 cellPadding=0 width="100%" border=0>
+              <TBODY>
+              <s:iterator value="menulist.{? #this.pid==#max.menuid}" var="min">
+              	<TR>
+                  <TD><IMG src="main/images/left.gif"></TD>
+                  <TD height=23><A href="<%=path %>/oa/${link }" target=I1><s:property value="#min.menuname"/></A></TD>
+                </TR>
+                </s:iterator>
+              </TBODY>
+          </TABLE></TD>
+        </TR>
+      </TBODY>
+    </TABLE></td>
+  </tr>
+  <tr>
+    <td height="5" background="main/images/tableline_bottom.jpg" bgcolor="#9BC2ED"></td>
+  </tr>
+</s:iterator> 
+</table>
+		</td>
+    </tr>
+    </table>
+	</td>
+  </tr>
+</table>
+</body>
+</html>

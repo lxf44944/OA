@@ -1,0 +1,41 @@
+package user.dao;
+
+import java.util.List;
+
+import pojo.TEmail;
+import pojo.TPost;
+import pojo.TUserRole;
+
+public interface UserRoleDAO {
+	public void save(TUserRole transientInstance);
+	
+	public TUserRole findByUserid(int userid);
+	
+	public int deleteRole(int userid);
+	
+	public List findRidByUserid(int userid);
+	
+	public boolean isUser(int rid);
+	
+	/**
+	 * 分页
+	 * @param notice
+	 * @param userid　根据登录用户id显示该用户的所有公告
+	 * @param currentPage
+	 * @param pageSize
+	 * @return
+	 */
+	public PageModel searchonlyUser(TPost post,int userid, int currentPage, int pageSize);
+	
+	/**
+	 * 
+	 * @param mail 查询条件
+	 * @param userid 用户id
+	 * @param status 邮箱类型（发件箱，收件箱，垃圾箱，草稿箱）
+	 * @param currentPage 当前页
+	 * @param pageSize 每页显示条数
+	 * @return
+	 */
+	public PageModel searchBox(TEmail mail,int userid,int status, int currentPage, int pageSize);
+
+}

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver">
+		</property>
+		<property name="url" value="jdbc:oracle:thin:@localhost:1521:orcl">
+		</property>
+		<property name="username" value="oapro"></property>
+		<property name="password" value="oapro"></property>
+	</bean>
+
+
+	<!-- 指定spring提供的session工厂 -->
+
+	<bean id="sessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+		<property name="dataSource">
+			<ref bean="dataSource" />
+		</property>
+
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">
+					org.hibernate.dialect.Oracle9Dialect
+				</prop>
+				<prop key="hibernate.show_sql">
+					true
+				</prop>
+
+				<prop key="hibernate.format_sql">
+					true
+				</prop>
+			</props>
+		</property>
+		<property name="mappingResources">
+			<list>
+				<value>post/pojo/TPost.hbm.xml</value>
+				<value>post/pojo/TPostFile.hbm.xml</value>
+				<value>pojo/TUser.hbm.xml</value>
+				<value>post/pojo/TPostUser.hbm.xml</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="TPostDAO" class="post.dao.TPostDAO">
+		<property name="sessionFactory">
+			<ref bean="sessionFactory"></ref>
+		</property>
+	</bean>
+	<bean id="TPostFileDAO" class="post.dao.TPostFileDAO">
+		<property name="sessionFactory">
+			<ref bean="sessionFactory"></ref>
+		</property>
+	</bean>
+	<bean id="UserDAO" class="post.dao.UserDAO">
+		<property name="sessionFactory">
+			<ref bean="sessionFactory"></ref>
+		</property>
+	</bean>
+	<bean id="PostUserDAO" class="post.dao.TPostUserDAO">
+		<property name="sessionFactory">
+			<ref bean="sessionFactory"></ref>
+		</property>
+	</bean>
+
+
+
+	<!-- 事务管理器   HibernateTransactionManager-->
+	<bean id="transactionManagerId" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+
+	<!-- 代理工厂 -->
+	<bean id="basicProxy" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean"
+		abstract="true">
+		<property name="transactionManager" ref="transactionManagerId" />
+		<property name="transactionAttributes">
+			<props>
+				<prop key="*">PROPAGATION_REQUIRED</prop>
+			</props>
+		</property>
+	</bean>
+
+	<!-- 子事务代理 -->
+	<bean id="postDAO" parent="basicProxy">
+		<property name="target" ref="TPostDAO" />
+	</bean>
+	<bean id="postfileDAO" parent="basicProxy">
+		<property name="target" ref="TPostFileDAO" />
+	</bean>
+	<bean id="userDAO" parent="basicProxy">
+		<property name="target" ref="UserDAO" />
+	</bean>
+	<bean id="postuserDAO" parent="basicProxy">
+		<property name="target" ref="PostUserDAO" />
+	</bean>
+</beans>

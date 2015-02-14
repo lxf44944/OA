@@ -1,0 +1,81 @@
+package pojo;
+
+
+
+/**
+ * TEmailFile entity. @author MyEclipse Persistence Tools
+ */
+
+public class TEmailFile  implements java.io.Serializable {
+
+
+    // Fields    
+
+     private Integer nfileid;
+     private TEmail email;
+     private String soldname;
+     private String snewname;
+
+
+    // Constructors
+
+    /** default constructor */
+    public TEmailFile() {
+    }
+
+    
+    /** full constructor */
+    public TEmailFile(TEmail email, String soldname, String snewname) {
+        this.email = email;
+        this.soldname = soldname;
+        this.snewname = snewname;
+    }
+
+   
+    // Property accessors
+
+    public Integer getNfileid() {
+        return this.nfileid;
+    }
+    
+    public void setNfileid(Integer nfileid) {
+        this.nfileid = nfileid;
+    }
+
+
+
+    public TEmail getEmail() {
+		return email;
+	}
+
+
+	public void setEmail(TEmail email) {
+		this.email = email;
+	}
+
+
+	public String getSoldname() {
+        return this.soldname;
+    }
+    
+    public void setSoldname(String soldname) {
+        this.soldname = soldname;
+    }
+
+    public String getSnewname() {
+        return this.snewname;
+    }
+    
+    public void setSnewname(String snewname) {
+        this.snewname = snewname;
+    }
+   
+
+
+
+
+
+
+
+
+}

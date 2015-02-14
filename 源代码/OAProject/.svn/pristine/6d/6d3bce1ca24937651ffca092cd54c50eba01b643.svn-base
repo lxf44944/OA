@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	 http://www.springframework.org/schema/tx
+     http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+     http://www.springframework.org/schema/aop 
+     http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+	">
+	
+	
+	
+	<bean id="TEmailDAO" class="email.dao.TEmailDAO">
+		<property name="sessionFactory">
+			<ref bean="sessionFactory" />
+		</property>
+	</bean>
+	<bean id="TUserDAO" class="email.dao.TUserDAO">
+		<property name="sessionFactory">
+			<ref bean="sessionFactory" />
+		</property>
+	</bean>
+	<bean id="TEmailFileDAO" class="email.dao.TEmailFileDAO">
+		<property name="sessionFactory">
+			<ref bean="sessionFactory" />
+		</property>
+	</bean>
+	<bean id="TReceiveemailDAO" class="email.dao.TReceiveemailDAO">
+		<property name="sessionFactory">
+			<ref bean="sessionFactory" />
+		</property>
+	</bean>
+	<!-- 事务管理器 -->
+	<bean id="transactionManagerId"
+		class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+	
+	<!-- 业务层实现类 -->
+	<bean id="emailService" class="email.service.imple.EmailServiceImple">
+		<property name="emailDAO" ref="TEmailDAO" />
+		<property name="emailFileDAO" ref="TEmailFileDAO" />
+		<property name="receiveemailDAO" ref="TReceiveemailDAO" />
+		<property name="userDao" ref="TUserDAO" />
+
+	</bean>
+	<!-- 命名空间节点配置 声明式事务方式 -->
+	<!-- 写通知advice -->
+	<tx:advice id="emailAdvice" transaction-manager="transactionManagerId">
+		<tx:attributes>
+			<tx:method name="*" propagation="REQUIRED" />
+		</tx:attributes>
+	</tx:advice>
+
+	<aop:config>
+		<aop:pointcut id="emailPoint"
+			expression="execution(* email.service.imple.*.*(..))" />
+		<aop:advisor advice-ref="emailAdvice" pointcut-ref="emailPoint" />
+	</aop:config>
+	
+</beans>

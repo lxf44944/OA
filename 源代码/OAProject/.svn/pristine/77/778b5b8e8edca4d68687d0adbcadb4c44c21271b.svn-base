@@ -1,0 +1,34 @@
+package user.action;
+
+import javax.annotation.Resource;
+
+import pojo.TRole;
+import user.service.RoleService;
+
+
+import com.opensymphony.xwork2.ModelDriven;
+
+
+
+
+public class RoleListAction extends BaseAction implements ModelDriven<TRole>{
+	private TRole role=new TRole();
+	
+	private RoleService roleService;
+	public String view(){
+		result=roleService.search(role, currentPage, pageSize);
+		System.out.println(result.getResult());
+		return SUCCESS;
+	}
+	public TRole getModel() {
+		return role;
+	}
+	public RoleService getRoleService() {
+		return roleService;
+	}
+	public void setRoleService(RoleService roleService) {
+		this.roleService = roleService;
+	}
+	
+	
+}

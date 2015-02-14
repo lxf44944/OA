@@ -1,0 +1,33 @@
+<%@ page pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.fckeditor.net" prefix="FCK"%>
+<html>
+	<head>
+		<title>Welcome</title>
+
+	</head>
+	<body>
+		<form name="form1" action='show.jsp' method="post">
+			<input type="hidden" name="content" value="ttt">
+			<FCK:editor instanceName="content"  height="200" value=" " />        
+
+			<input type="submit" name="SubM" value="发表" />
+		</form>
+		
+		<script type="text/javascript">
+			function test(){
+				//FCK取值
+				var checkContent =FCKeditorAPI.GetInstance("content").GetXHTML(); 
+				alert(checkContent);
+			}
+			
+			function test2(){
+				//FCK赋值
+			var editor = FCKeditorAPI.GetInstance("content"); 
+			editor.EditorDocument.body.innerHTML="";
+			}
+			
+		</script>
+		<input type="button" value="getHTML" onclick="test();">
+		<input type="button" value="clearHTML" onclick="test2();">
+	</body>
+</html>

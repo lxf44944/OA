@@ -1,0 +1,153 @@
+package post.dao;
+
+import java.util.List;
+import org.hibernate.LockMode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+
+import post.inf.PostFileInf;
+import post.pojo.TPostFile;
+
+/**
+ * A data access object (DAO) providing persistence and search support for
+ * TPostFile entities. Transaction control of the save(), update() and delete()
+ * operations can directly support Spring container-managed transactions or they
+ * can be augmented to handle user-managed Spring transactions. Each of these
+ * methods provides additional information for how to configure it for the
+ * desired type of transaction control.
+ * 
+ * @see post.pojo.TPostFile
+ * @author MyEclipse Persistence Tools
+ */
+
+public class TPostFileDAO extends HibernateDaoSupport implements PostFileInf {
+	private static final Logger log = LoggerFactory
+			.getLogger(TPostFileDAO.class);
+	// property constants
+	public static final String SOLDNAME = "soldname";
+	public static final String SNEWNAME = "snewname";
+
+	protected void initDao() {
+		// do nothing
+	}
+
+	public void save(TPostFile transientInstance) {
+		log.debug("saving TPostFile instance");
+		try {
+			getHibernateTemplate().save(transientInstance);
+			log.debug("save successful");
+		} catch (RuntimeException re) {
+			log.error("save failed", re);
+			throw re;
+		}
+	}
+
+	public void delete(TPostFile persistentInstance) {
+		log.debug("deleting TPostFile instance");
+		try {
+			getHibernateTemplate().delete(persistentInstance);
+			log.debug("delete successful");
+		} catch (RuntimeException re) {
+			log.error("delete failed", re);
+			throw re;
+		}
+	}
+
+	public TPostFile findById(java.lang.Integer id) {
+		log.debug("getting TPostFile instance with id: " + id);
+		try {
+			TPostFile instance = (TPostFile) getHibernateTemplate().get(
+					"post.pojo.TPostFile", id);
+			return instance;
+		} catch (RuntimeException re) {
+			log.error("get failed", re);
+			throw re;
+		}
+	}
+
+	public List findByExample(TPostFile instance) {
+		log.debug("finding TPostFile instance by example");
+		try {
+			List results = getHibernateTemplate().findByExample(instance);
+			log.debug("find by example successful, result size: "
+					+ results.size());
+			return results;
+		} catch (RuntimeException re) {
+			log.error("find by example failed", re);
+			throw re;
+		}
+	}
+
+	public List findByProperty(String propertyName, Object value) {
+		log.debug("finding TPostFile instance with property: " + propertyName
+				+ ", value: " + value);
+		try {
+			String queryString = "from TPostFile as model where model."
+					+ propertyName + "= ?";
+			return getHibernateTemplate().find(queryString, value);
+		} catch (RuntimeException re) {
+			log.error("find by property name failed", re);
+			throw re;
+		}
+	}
+
+	public List findBySoldname(Object soldname) {
+		return findByProperty(SOLDNAME, soldname);
+	}
+
+	public List findBySnewname(Object snewname) {
+		return findByProperty(SNEWNAME, snewname);
+	}
+
+	public List findAll() {
+		log.debug("finding all TPostFile instances");
+		try {
+			String queryString = "from TPostFile";
+			return getHibernateTemplate().find(queryString);
+		} catch (RuntimeException re) {
+			log.error("find all failed", re);
+			throw re;
+		}
+	}
+
+	public TPostFile merge(TPostFile detachedInstance) {
+		log.debug("merging TPostFile instance");
+		try {
+			TPostFile result = (TPostFile) getHibernateTemplate().merge(
+					detachedInstance);
+			log.debug("merge successful");
+			return result;
+		} catch (RuntimeException re) {
+			log.error("merge failed", re);
+			throw re;
+		}
+	}
+
+	public void attachDirty(TPostFile instance) {
+		log.debug("attaching dirty TPostFile instance");
+		try {
+			getHibernateTemplate().saveOrUpdate(instance);
+			log.debug("attach successful");
+		} catch (RuntimeException re) {
+			log.error("attach failed", re);
+			throw re;
+		}
+	}
+
+	public void attachClean(TPostFile instance) {
+		log.debug("attaching clean TPostFile instance");
+		try {
+			getHibernateTemplate().lock(instance, LockMode.NONE);
+			log.debug("attach successful");
+		} catch (RuntimeException re) {
+			log.error("attach failed", re);
+			throw re;
+		}
+	}
+
+	public static TPostFileDAO getFromApplicationContext(ApplicationContext ctx) {
+		return (TPostFileDAO) ctx.getBean("TPostFileDAO");
+	}
+}

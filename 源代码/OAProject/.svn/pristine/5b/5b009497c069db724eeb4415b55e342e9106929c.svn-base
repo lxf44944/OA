@@ -1,0 +1,99 @@
+package post.test;
+
+import java.sql.Clob;
+import java.sql.SQLException;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+
+import org.hibernate.Hibernate;
+import org.hibernate.Session;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+
+import pojo.TUser;
+import post.inf.PostFileInf;
+import post.inf.PostInf;
+import post.inf.PostUserInf;
+import post.inf.Userinf;
+import post.pojo.TPost;
+import post.pojo.TPostFile;
+import post.pojo.TPostUser;
+import post.pojo.TPostUserId;
+
+public class Test extends HibernateDaoSupport {
+
+	/**
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		// Session sessio
+		// ApplicationContext applicationContext = new
+		// ClassPathXmlApplicationContext(
+		// "post_applicationContext.xml");
+		// PostInf dao = (PostInf) applicationContext.getBean("postDAO");
+		// PostFileInf dao = (PostFileInf) applicationContext
+		// .getBean("postfileDAO");
+		// List<TPostFile> files=dao.findByProperty("postid",53);
+		// for (TPostFile tPostFile : files) {
+		// System.out.println(tPostFile.getSoldname());
+		// }
+
+		// dao.save(new TBatch("batch4"));
+		// TPost post=new TPost();
+		// post.setStitle("bb");
+		// post.setScontent(Hibernate.createClob(" "));
+		//		
+		// dao.save(post,"sasdasdasdasdsadsadasdasdasdas");
+
+		// TPost post=dao.findById(52);
+
+		// ×Ö·û´ó×Ö¶Î
+		// Clob clob = post.getScontent();
+		// try {
+		// String content = clob.getSubString((long) 1, (int) clob.length());
+		// System.out.println("content:" + content);
+		// } catch (SQLException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
+
+		// PostFileInf dao = (PostFileInf) applicationContext
+		// .getBean("postfileDAO");
+		// dao.deleteall("post.pojo.TPostFile.postid", 84);
+		// List<TPost> postlist = dao.findByPropertyDESC("nstatus", 1);
+		// for (TPost tPost : postlist) {
+		// System.out.println(tPost.getPostid());
+		// }
+
+		// List<TPost> postlist = dao.findBystitledate("me","2013-8-17",
+		// "","1");
+		// for (TPost tPost : postlist) {
+		// System.out.println(tPost.getStitle());
+		// }
+		// System.out.println("sas");
+
+		// ApplicationContext applicationContext = new
+		// ClassPathXmlApplicationContext(
+		// "post_applicationContext.xml");
+		// Userinf userdao = (Userinf) applicationContext.getBean("userDAO");
+		// for (int i = 0; i <10; i++) {
+		// TUser tUser=new TUser();
+		// tUser.setUsername("name"+i);
+		// userdao.save(tUser);
+		// }
+		// List<TUser> users = userdao.findAll();
+		//
+		// for (TUser tUser : users) {
+		// System.out.println(tUser.getUsername());
+		//
+		// }
+
+		ApplicationContext applicationContext = new ClassPathXmlApplicationContext(
+				"post_applicationContext.xml");
+		
+		
+	}
+}

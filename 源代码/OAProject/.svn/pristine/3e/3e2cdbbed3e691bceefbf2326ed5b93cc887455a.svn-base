@@ -1,0 +1,82 @@
+package pojo;
+
+
+
+/**
+ * TReceiveemailId entity. @author MyEclipse Persistence Tools
+ */
+
+public class TReceiveemailId  implements java.io.Serializable {
+
+
+    // Fields    
+
+     private String susername;
+    // private Integer nemailid;
+     private TEmail email;
+
+
+    // Constructors
+
+    /** default constructor */
+    public TReceiveemailId() {
+    }
+
+    
+    /** full constructor */
+    public TReceiveemailId(TEmail email, String susername) {
+        this.email = email;
+        this.susername = susername;
+    }
+
+   
+    // Property accessors
+
+ 
+
+
+    
+    public String getSusername() {
+		return susername;
+	}
+
+
+	public void setSusername(String susername) {
+		this.susername = susername;
+	}
+
+
+    public TEmail getEmail() {
+		return email;
+	}
+
+	public void setEmail(TEmail email) {
+		this.email = email;
+	}
+   
+
+
+
+   public boolean equals(Object other) {
+         if ( (this == other ) ) return true;
+		 if ( (other == null ) ) return false;
+		 if ( !(other instanceof TReceiveemailId) ) return false;
+		 TReceiveemailId castOther = ( TReceiveemailId ) other; 
+         
+		 return ( (this.getEmail()==castOther.getEmail()) || ( this.getEmail()!=null && castOther.getEmail()!=null && this.getEmail().equals(castOther.getEmail()) ) )
+ && ( (this.getSusername()==castOther.getSusername()) || ( this.getSusername()!=null && castOther.getSusername()!=null && this.getSusername().equals(castOther.getSusername()) ) );
+   }
+   
+   public int hashCode() {
+         int result = 17;
+         
+         result = 37 * result + ( getEmail() == null ? 0 : this.getEmail().hashCode() );
+         result = 37 * result + ( getSusername() == null ? 0 : this.getSusername().hashCode() );
+         return result;
+   }   
+
+
+
+
+
+}

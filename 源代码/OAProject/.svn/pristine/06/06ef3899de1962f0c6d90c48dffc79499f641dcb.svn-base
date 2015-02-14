@@ -1,0 +1,46 @@
+package post.inf;
+
+import java.sql.Clob;
+import java.util.List;
+
+import post.pojo.TPost;
+
+
+
+public interface PostInf {
+	/**
+	 * 添加公告
+	 * @param postBean
+	 * @return
+	 */
+	
+	public void saveOrUpdate(TPost post);
+	public int save(TPost post,String content);
+	
+	/**
+	 * 修改公告
+	 * @param postid
+	 * @return
+	 */
+	
+//	public boolean updatepost(TPost postBean);
+	/**
+	 * 获得公告
+	 * @param postid
+	 * @return
+	 */
+	
+	public TPost findById(java.lang.Integer id);
+	/**
+	 * 获得公告列表
+	 * @return
+	 */
+	
+	public List findAll();
+//	/**
+//	 * 
+//	 * @return
+//	 */
+	public void delete(TPost persistentInstance);
+
+}

@@ -1,0 +1,8 @@
+package post.inf;
+
+import post.pojo.TPostUser;
+
+public interface PostUserInf {
+	public void save(TPostUser transientInstance);
+
+}

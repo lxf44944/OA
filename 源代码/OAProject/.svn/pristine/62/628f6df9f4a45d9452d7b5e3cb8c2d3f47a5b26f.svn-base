@@ -1,0 +1,42 @@
+<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
+<%@ taglib prefix="s" uri="/struts-tags"%>
+<%@ taglib uri="http://java.fckeditor.net" prefix="FCK"%>
+<% request.setAttribute("path", request.getContextPath()); %>
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+	<head>
+
+		<title>邮箱首页</title>
+
+		<meta http-equiv="pragma" content="no-cache">
+		<meta http-equiv="cache-control" content="no-cache">
+		<meta http-equiv="expires" content="0">
+		<meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+		<meta http-equiv="description" content="This is my page">
+		<!--
+	<link rel="stylesheet" type="text/css" href="styles.css">
+	-->
+
+		<SCRIPT type="text/javascript">
+		function formSubmit(value){
+			if(check() && value=="发送"){
+				var form = document.forms[0];
+				form.action="${request.path}/system/emailAction.action?type=1";
+				alert(form.action);
+				form.submit();
+			}
+			
+		}
+	</SCRIPT>
+	</head>
+
+	<body>
+	<h4>欢迎你，111</h4>
+	<input type="button" value="写信" onclick="javascript:window.location.href='${request.path}/jsp/email/addemail.jsp'">
+	<input type="button" value="草稿箱" onclick="javascript:window.location.href='${request.path}/system/emailAction!drafts.action?email.nemailid=5'">
+	<input type="button" value="收件箱" onclick="javascript:window.location.href='${request.path}/system/emailAction!readReceive.action'">
+	
+		
+	</body>
+</html>

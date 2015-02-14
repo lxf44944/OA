@@ -1,0 +1,230 @@
+package post.imple;
+
+import java.io.IOException;
+import java.io.Writer;
+import java.sql.Clob;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+
+import post.inf.PostInf;
+
+
+
+
+
+//public class PostImpl implements PostInf {
+//	Connection connection=null;
+//	Statement statement=null;
+//	ResultSet resultSet=null;
+//
+//	public int addpost(PostBean postBean) {
+//		// TODO Auto-generated method stub
+//		connection=Db_Con.getDbCon().connection();
+//		
+//		String sql="insert into t_post(postid,posttitle,content,postdate) values(seq_post.nextval,'"+postBean.getPosttitle()+"',empty_clob(),sysdate)";
+//		System.out.println(sql);
+//		try {
+//			connection.setAutoCommit(false);
+//			statement=connection.createStatement();
+//			statement.executeUpdate(sql);
+//			String resql="select seq_post.currval from dual";
+//			int id=-1;
+//			resultSet=statement.executeQuery(resql);
+//			if(resultSet.next()){
+//				id=resultSet.getInt(1);
+//			}
+//			sql="select content from t_post where postid="+id+" for update";
+//			resultSet=statement.executeQuery(sql);
+//			if(resultSet.next()){
+//				Clob clob=resultSet.getClob("content");
+//				Writer writer=clob.setCharacterStream(0);
+//				
+//					writer.write(postBean.getContent());
+//					writer.flush();
+//					writer.close();
+//					connection.commit();
+//					connection.setAutoCommit(true);
+//					return id;
+//				
+//				
+//				
+//			}
+//			
+//			
+//			
+//		} catch (SQLException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}finally{
+//			Db_Con.getDbCon().close(resultSet, statement, connection);
+//		}
+//		
+//		
+//		
+//		return -1;
+//	}
+//
+//	public List<PostBean> postlist() {
+//		List<PostBean> postBeans = new ArrayList<PostBean>();
+//		StringBuffer sql = new StringBuffer();
+//		sql.append("select * from t_post where POSTTITLE like '%" 
+//				+"%'");
+//
+//		connection=Db_Con.getDbCon().connection();
+//		
+//		
+//
+//		try {
+//			statement = connection.createStatement();
+//			resultSet = statement.executeQuery(sql.toString());
+//			while (resultSet.next()) {
+//				PostBean postBean = new PostBean();
+//				postBean.setPostid(resultSet.getInt("postid"));
+//				postBean.setPostdate(resultSet.getString("POSTDATE"));
+//				postBean.setPosttitle(resultSet.getString("posttitle"));
+//				// 查询大字段
+//				Clob clob = resultSet.getClob("content");
+//				if (clob == null || clob.length() == 0) {
+//					postBean.setContent("");
+//				} else {
+//					// 截取大字段的内容
+//					String content = clob.getSubString(1L, (int) clob.length());
+//					postBean.setContent(content);
+//					// IO Reader
+//				}
+//				postBeans.add(postBean);
+//			}
+//
+//		} catch (SQLException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} finally {
+//			Db_Con.getDbCon().close(resultSet, statement, connection);
+//			
+//		}
+//
+//		return postBeans;
+//	}
+//
+//	public boolean updatepost(PostBean postBean) {
+//	connection=Db_Con.getDbCon().connection();
+//		
+//		String sql="update t_post set ";
+//		if(postBean.getPosttitle()!=null&&!postBean.getPosttitle().equals("")){
+//			sql=sql+"posttitle='"+postBean.getPosttitle()+"'";
+//		}
+//		if(postBean.getContent()!=null&&!postBean.getContent().equals("")){
+//			sql=sql+",content=empty_clob()";
+//			
+//		}
+//		if(postBean.getPostid()!=0){
+//			sql=sql+" where postid="+postBean.getPostid();
+//			
+//		}
+//		System.out.println(sql);
+//		try {
+//			connection.setAutoCommit(false);
+//			statement=connection.createStatement();
+//			statement.executeUpdate(sql);
+//		
+//			sql="select content from t_post where postid="+postBean.getPostid()+" for update";
+//			resultSet=statement.executeQuery(sql);
+//			if(resultSet.next()){
+//				Clob clob=resultSet.getClob("content");
+//				Writer writer=clob.setCharacterStream(0);
+//				
+//					writer.write(postBean.getContent());
+//					writer.flush();
+//					writer.close();
+//					connection.commit();
+//					connection.setAutoCommit(true);
+//					return true;
+//				
+//				
+//			}
+//			
+//			
+//			
+//		} catch (SQLException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}finally{
+//			Db_Con.getDbCon().close(resultSet, statement, connection);
+//		}
+//		
+//		
+//		
+//	
+//		return false;
+//	}
+//
+//	public boolean delete(int postid ) {
+//		connection=Db_Con.getDbCon().connection();
+//		
+//		String sql="delete from t_post where postid="+postid;
+//		
+//		try {
+//			statement=connection.createStatement();
+//			int i=statement.executeUpdate(sql);
+//			if(i!=0){
+//				return true;
+//			}
+//		} catch (SQLException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}finally{
+//			Db_Con.getDbCon().close(null, statement, connection);
+//		}
+//		
+//		
+//		
+//		return false;
+//	}
+//
+//	public PostBean getpost(int postid) {
+//		connection=Db_Con.getDbCon().connection();
+//		String sql="select * from t_post where postid="+postid;
+//		PostBean postBean=new PostBean();
+//		
+//		try {
+//			
+//			statement =connection.createStatement();
+//			resultSet=statement.executeQuery(sql);
+//			if(resultSet.next()){
+//				postBean.setPostid(resultSet.getInt("postid"));
+//				postBean.setPostdate(resultSet.getString("POSTDATE"));
+//				postBean.setPosttitle(resultSet.getString("posttitle"));
+//				// 查询大字段
+//				Clob clob = resultSet.getClob("content");
+//				if (clob == null || clob.length() == 0) {
+//					postBean.setContent("");
+//				} else {
+//					// 截取大字段的内容
+//					String content = clob.getSubString(1L, (int) clob.length());
+//					postBean.setContent(content);
+//					
+//				}
+//				
+//			}
+//			
+//			
+//			
+//		} catch (SQLException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		
+//		return postBean;
+//	}
+//	
+//}
